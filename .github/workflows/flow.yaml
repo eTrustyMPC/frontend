@@ -13,7 +13,6 @@ jobs:
     name: Linters
     steps:
       - uses: actions/checkout@v3
-        uses: actions/setup-node@v3
         name: run lint
         with:
           node-version: ${{ matrix.node-version }}
