@@ -13,9 +13,10 @@ jobs:
     name: Linters
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - run: nvm i 16.14
+      - run: nvm use 16.14
       - run: yarn install
       - run: yarn run lint
