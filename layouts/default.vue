@@ -15,6 +15,6 @@ export default defineComponent({
   components: {
     appHeader,
     appFooter,
-  }
+  },
 });
 </script>
