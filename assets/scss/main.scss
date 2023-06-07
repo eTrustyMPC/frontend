@@ -1,2 +1,42 @@
+$input-color: #273038;
+$input-border-color: #273038;
+$input-hover-border-color: rgb(39, 48, 56, 0.5);
+
 @import "./bulma/sass/utilities/_all.sass";
 @import "./bulma/bulma";
+
+.steps-form {
+  padding: 50px 0;
+
+  .menu-container {
+    margin-right: 20px;
+    margin-bottom: auto;
+  }
+
+  .form-container {
+    padding: 25px;
+
+    .buttons {
+      margin-top: 30px;
+    }
+  }
+
+  .box {
+    border-radius: 4px;
+    -webkit-box-shadow: 6px 6px 20px -1px rgba(39, 48, 56, 0.25);
+    -moz-box-shadow: 6px 6px 20px -1px rgba(39, 48, 56, 0.25);
+    box-shadow: 6px 6px 20px -1px rgba(39, 48, 56, 0.25);
+  }
+}
+
+
+.button {
+  &.next-step {
+    transition: all 0.4s;
+
+    &:hover {
+      color: #fff;
+      background: #f7b452;
+    }
+  }
+}

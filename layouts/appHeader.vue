@@ -4,7 +4,7 @@
       <div class="columns">
         <div class="column is-2">
           <div class="logo">
-            <img src="header-logo.png" />
+            <img src="/header-logo.png" />
           </div>
         </div>
       </div>

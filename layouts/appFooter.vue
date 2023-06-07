@@ -4,7 +4,7 @@
       <div class="columns is-vcentered">
         <div class="column is-2">
           <div class="logo">
-            <img src="logo.svg" />
+            <img src="/logo.svg" />
           </div>
         </div>
         <div class="column is-9 has-text-centered">
@@ -20,6 +20,10 @@
 
 <style lang="scss">
 footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   background: #273038;
   padding: 20px 0px;
   color: #fff;
