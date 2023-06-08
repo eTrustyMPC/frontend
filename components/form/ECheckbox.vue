@@ -1,6 +1,10 @@
 <template>
   <label class="checkbox" :name="name">
-    <input type="checkbox" @change="$emit('change', $events.target.value)>
+    <input
+      type="checkbox"
+      value="1"
+      @change="$emit('change', $event.target.checked)"
+    />
     {{ label }}
   </label>
 </template>
@@ -18,5 +22,6 @@ export default defineComponent({
       default: "",
     },
   },
+  emits: ["change"],
 });
 </script>

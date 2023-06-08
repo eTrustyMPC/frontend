@@ -4,9 +4,9 @@
     <div class="control">
       <input
         class="input"
-        type="text"
         :name="name"
         :placeholder="placeholder"
+        :type="fieldType"
       />
     </div>
   </div>
@@ -27,6 +27,10 @@ export default defineComponent({
     label: {
       type: String,
       default: "",
+    },
+    fieldType: {
+      type: String,
+      default: "text",
     },
   },
 });

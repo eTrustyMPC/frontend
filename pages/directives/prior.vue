@@ -46,16 +46,32 @@
               comp_negotiation: 'Competitive procedure with negotiation',
             }"
           />
-          <ENumberInput label="Quantity of section II:" name="num_of_section" :isInputDisabled="isNumOfSectionDisabled"/>
+          <ENumberInput
+            label="Quantity of section II:"
+            name="num_of_section"
+            :is-input-disabled="isNumOfSectionDisabled"
+          />
 
           <div class="joint-procurement">
-            <ECheckbox label="The contract involves joint procurement"/>
-            <ENumberInput label="Number of contracting authorities responsible for the procedure:" name="num_of_contact"/>
+            <ECheckbox
+              label="The contract involves joint procurement"
+              @change="(v) => (isJointProcurement = !v)"
+            />
+            <ENumberInput
+              label="Number of contracting authorities responsible for the procedure:"
+              name="num_of_contact"
+              :is-input-disabled="isJointProcurement"
+            />
           </div>
         </div>
         <div class="buttons is-right">
-          <a class="button next-step" v-if="numberStep != 0">Back</a>
-          <a class="button next-step" @click="goToNextStep()" :disabled="!isStepValid">Next</a>
+          <a v-if="numberStep != 0" class="button next-step">Back</a>
+          <a
+            class="button next-step"
+            :disabled="!isStepValid"
+            @click="goToNextStep()"
+            >Next</a
+          >
         </div>
       </div>
     </div>
@@ -63,7 +79,6 @@
 </template>
 
 <script lang="ts">
-import EInput from "@/components/form/EInput.vue";
 import RadioButtons from "@/components/form/RadioButtons.vue";
 import StepsMenu from "@/components/form/StepsMenu.vue";
 import ENumberInput from "@/components/form/ENumberInput.vue";
@@ -71,30 +86,30 @@ import ECheckbox from "@/components/form/ECheckbox.vue";
 
 export default defineComponent({
   name: "IndexPage",
-  components: { StepsMenu, EInput, RadioButtons, ENumberInput, ECheckbox },
+  components: { StepsMenu, RadioButtons, ENumberInput, ECheckbox },
   data: () => {
     return {
       numberStep: 0,
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
-      isJointProcurement: false
-    }
-  },
-  methods: {
-    goToNextStep() {
-      if (this.isStepValid) this.numberStep++
-    },
-
-    changeTypeNotice(v) {
-      this.isNumOfSectionDisabled = (v != 'prior_notice')
-      this.isTypeProcedureDisabled = (v == 'call_competition')
-    }
+      isJointProcurement: true,
+    };
   },
   computed: {
     isStepValid() {
-      return false
-    }
-  }
+      return false;
+    },
+  },
+  methods: {
+    goToNextStep() {
+      if (this.isStepValid) this.numberStep++;
+    },
+
+    changeTypeNotice(v) {
+      this.isNumOfSectionDisabled = v !== "prior_notice";
+      this.isTypeProcedureDisabled = v === "call_competition";
+    },
+  },
 });
 </script>
 

@@ -2,8 +2,19 @@ $input-color: #273038;
 $input-border-color: #273038;
 $input-hover-border-color: rgb(39, 48, 56, 0.5);
 
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+@import "@fortawesome/fontawesome-free/css/all.css";
 @import "./bulma/sass/utilities/_all.sass";
 @import "./bulma/bulma";
+
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+button {
+  border: 0;
+}
 
 .steps-form {
   padding: 50px 0;
@@ -29,7 +40,6 @@ $input-hover-border-color: rgb(39, 48, 56, 0.5);
   }
 }
 
-
 .button {
   &.next-step {
     transition: all 0.4s;
@@ -39,4 +49,8 @@ $input-hover-border-color: rgb(39, 48, 56, 0.5);
       background: #f7b452;
     }
   }
+}
+
+.title {
+  color: #273038;
 }

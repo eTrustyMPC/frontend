@@ -1,10 +1,12 @@
 <template>
   <div class="content steps-menu">
     <ul>
-      <li :class="activeElement == index ? 'is-active' : ''" v-for="(name, index) in stepNames">
-        <a href="#" @click="activeElement = index">{{
-          name
-        }}</a>
+      <li
+        v-for="(name, index) in stepNames"
+        :key="name"
+        :class="activeElement == index ? 'is-active' : ''"
+      >
+        <a href="#" @click="activeElement = index">{{ name }}</a>
       </li>
     </ul>
   </div>
@@ -13,16 +15,18 @@
 <script lang="ts">
 export default defineComponent({
   name: "StepsMenu",
-  data: () => {
-    return {
-      activeElement: 0
-    }
-  },
   props: {
     stepNames: {
       type: Array,
-      default: [],
+      default() {
+        return [];
+      },
     },
+  },
+  data: () => {
+    return {
+      activeElement: 0,
+    };
   },
 });
 </script>
@@ -39,12 +43,11 @@ export default defineComponent({
       margin: 0;
       transition: all 0.3s;
 
-
       &.is-active {
         background: #f7b452;
 
         a {
-          color: #fff
+          color: #fff;
         }
       }
 
@@ -56,14 +59,14 @@ export default defineComponent({
         background: #f7b452;
 
         a {
-          color: #fff
+          color: #fff;
         }
       }
 
       a {
         color: #273038;
         font-size: 18px;
-      }      
+      }
     }
   }
 

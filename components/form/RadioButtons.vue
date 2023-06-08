@@ -2,8 +2,8 @@
   <div class="radio-field">
     <label v-if="label" class="label">{{ label }}</label>
     <div class="control">
-      <label v-for="(key, v) in values" class="radio">
-        <input type="radio" :name="name" @click="$emit('change', v)"/>
+      <label v-for="(key, v) in values" :key="key" class="radio">
+        <input type="radio" :name="name" @click="$emit('change', v)" />
         {{ key }}
       </label>
     </div>
@@ -13,8 +13,21 @@
 <script lang="ts">
 export default defineComponent({
   name: "RadioButtons",
-  props: ["values", "label", "name"],
-  emits: ["change"]
+  props: {
+    values: {
+      type: Object,
+      required: true,
+    },
+    label: {
+      type: String,
+      default: "",
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ["change"],
 });
 </script>
 
