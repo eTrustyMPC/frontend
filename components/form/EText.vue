@@ -2,21 +2,21 @@
   <div class="input-field field">
     <label v-if="label" class="label">{{ label }}</label>
     <div class="control">
-      <input
-        class="input"
+      <textarea
+        class="textarea"
         :name="name"
         :placeholder="placeholder"
         :type="fieldType"
         :value="value"
         @input="(event) => $emit('update:value', event.target.value)"
-      />
+      ></textarea>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 export default defineComponent({
-  name: "EInput",
+  name: "EText",
   props: {
     placeholder: {
       type: String,
@@ -24,7 +24,7 @@ export default defineComponent({
     },
     name: {
       type: String,
-      default: "",
+      required: true,
     },
     label: {
       type: String,

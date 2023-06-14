@@ -2,11 +2,16 @@ $input-color: #273038;
 $input-border-color: #273038;
 $input-hover-border-color: rgb(39, 48, 56, 0.5);
 
-$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
-@import "@fortawesome/fontawesome-free/css/all.css";
+// $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+// @import "@fortawesome/fontawesome-free/css/all.css";
 @import "./bulma/sass/utilities/_all.sass";
 @import "./bulma/bulma";
 
+input:focus {
+  outline: none !important;
+  border-color: inherit !important;
+  box-shadow: none !important;
+}
 button:focus {
   outline: none !important;
   box-shadow: none !important;

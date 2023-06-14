@@ -17,7 +17,7 @@
               <span class="icon">
                 <i class="fa fa-sign-in"></i>
               </span>
-              Sign Up
+              <span>Sign Up</span>
             </a>
           </div>
         </div>
@@ -68,7 +68,7 @@ export default defineComponent({
   components: { EInput, ESelect, ECheckbox },
   data: () => {
     return {
-      isShowSignUpModal: true,
+      isShowSignUpModal: false,
     };
   },
 });
