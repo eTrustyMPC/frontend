@@ -9,7 +9,12 @@
               :key="name"
               :class="numberStep == index ? 'is-active' : ''"
             >
-              <a href="#" @click="setActiveMenuItem(index)">{{ name }}</a>
+              <a
+                href="#"
+                :class="disabledItems.includes(index) ? 'disabled' : ''"
+                @click="setActiveMenuItem(index)"
+                >{{ name }}</a
+              >
             </li>
           </ul>
         </div>
@@ -93,6 +98,10 @@
             </span>
             <span>Add criterion</span>
           </button>
+
+          <button v-if="(numberStep == maxStep) & isStepValid" class="button">
+            Create
+          </button>
         </div>
       </div>
     </div>
@@ -121,6 +130,7 @@ export default defineComponent({
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
       isJointProcurement: true,
+      disabledItems: [1, 2],
       criterions: [
         {
           title: "",
@@ -145,12 +155,28 @@ export default defineComponent({
       if (this.numberStep === 1) {
         return this.lotTitle.length >= 3 && this.lotDescription !== "";
       }
+
+      if (this.numberStep === 2) {
+        for (const cidx in this.criterions) {
+          const criterion = this.criterions[cidx];
+          if (criterion.title.length < 3 || criterion.name.length < 3) {
+            return false;
+          }
+        }
+        return true;
+      }
       return false;
     },
   },
   methods: {
     goToNextStep() {
-      if (this.isStepValid) this.numberStep++;
+      if (this.isStepValid) {
+        this.numberStep++;
+        this.disabledItems.splice(
+          this.disabledItems.indexOf(this.numberStep),
+          1
+        );
+      }
     },
     addCriterion() {
       this.criterions.push({
@@ -184,6 +210,11 @@ export default defineComponent({
       padding-left: 20px;
       margin: 0;
       transition: all 0.3s;
+
+      .disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
 
       &.is-active {
         background: #f7b452;
