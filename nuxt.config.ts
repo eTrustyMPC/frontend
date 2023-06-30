@@ -19,4 +19,13 @@ export default defineNuxtConfig({
       ],
     },
   },
+  router: { middleware: ["auth"] },
+  modules: [
+    "@pinia/nuxt",
+  ],
+  runtimeConfig: {
+    public: {
+      baseURL: process.env.BASE_URL || 'http://localhost:5000',
+    },
+  },
 });

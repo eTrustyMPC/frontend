@@ -12,29 +12,29 @@
             <a
               href="#"
               class="button is-link"
-              @click="isShowSignUpModal = !isShowSignUpModal"
+              @click="isShowSignInModal = !isShowSignInModal"
             >
               <span class="icon">
                 <i class="fa fa-sign-in"></i>
               </span>
-              <span>Sign Up</span>
+              <span>Sign In</span>
             </a>
           </div>
         </div>
       </div>
     </div>
-    <div :class="['signup-modal', isShowSignUpModal ? 'is-active' : '']">
+    <div :class="['signup-modal', isShowSignInModal ? 'is-active' : '']">
       <div class="container">
         <div class="columns is-vcentered">
           <div class="column is-4"></div>
           <div class="column is-4"></div>
           <div class="column is-3">
-            <h4 class="title is-4 has-text-centered">Create your account</h4>
-            <EInput label="E-mail" name="email" />
+            <h4 class="title is-4 has-text-centered">Sign In</h4>
+            <EInput v-model:value="email" label="E-mail" name="email" />
             <div class="password">
-              <EInput label="Password" name="password" field-type="password" />
+              <EInput v-model:value="password" label="Password" name="password" field-type="password" />
             </div>
-            <ESelect
+            <!-- <ESelect
               :values="{
                 buyer: 'Buyer',
                 supplier: 'Supplier',
@@ -42,18 +42,22 @@
               }"
               name="user_type"
               label="Person type"
-            />
-            <ECheckbox label="I agree with ..." />
-            <button class="button">Create account</button>
-            <a href="#" class="signin-link">Sign In</a>
+            /> -->
+            <!-- <ECheckbox label="I agree with ..." /> -->
+            <button class="button" @click="signin">Submit</button>
+            <!-- <a href="#" class="signin-link">Sign In</a> -->
           </div>
         </div>
       </div>
       <button
         class="modal-close is-large"
         aria-label="close"
-        @click="isShowSignUpModal = !isShowSignUpModal"
+        @click="isShowSignInModal = !isShowSignInModal"
       ></button>
+    </div>
+    <div :class="['notification is-info', isShowNotification ? 'is-active' : '']">
+      <button class="delete" @click="this.isShowNotification = false"></button>
+      Enter your e-mail and password!
     </div>
   </header>
 </template>
@@ -68,9 +72,17 @@ export default defineComponent({
   components: { EInput, ESelect, ECheckbox },
   data: () => {
     return {
-      isShowSignUpModal: false,
+      isShowSignInModal: false,
+      email: "",
+      password: "",
+      isShowNotification: false,
     };
   },
+  methods: {
+    signin() {
+      if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password == "") this.isShowNotification = true
+    }
+  }
 });
 </script>
 
@@ -92,6 +104,25 @@ header {
       &:hover {
         background: #273038;
       }
+    }
+  }
+
+  .notification {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 100;
+    transform: translateX(120%);
+    transition: all 0.5s ease-in-out;
+    background-color: #546B64;
+    
+    &.is-active {
+      -webkit-transform: translateX(0%);
+      -moz-transform: translateX(0%);
+      transform: translateX(0%);
+      -webkit-transition: all 0.5s ease-in-out;
+      -moz-transition: all 0.5s ease-in-out;
+      transition: all 0.5s ease-in-out;
     }
   }
 }
