@@ -2,7 +2,7 @@
   <div class="container steps-form">
     <div class="columns">
       <div class="column menu-container box is-4">
-        <StepsMenu
+        <!-- <StepsMenu
           :step-names="[
             'Preliminary questions',
             'Section I: Contracting authority',
@@ -11,7 +11,7 @@
             'Section VI: Complementary information',
             'Validating form ',
           ]"
-        />
+        /> -->
       </div>
       <div class="column form-container is-8 box">
         <div class="step-container">
@@ -80,13 +80,12 @@
 
 <script lang="ts">
 import RadioButtons from "@/components/form/RadioButtons.vue";
-import StepsMenu from "@/components/form/StepsMenu.vue";
 import ENumberInput from "@/components/form/ENumberInput.vue";
 import ECheckbox from "@/components/form/ECheckbox.vue";
 
 export default defineComponent({
   name: "IndexPage",
-  components: { StepsMenu, RadioButtons, ENumberInput, ECheckbox },
+  components: { RadioButtons, ENumberInput, ECheckbox },
   data: () => {
     return {
       numberStep: 0,

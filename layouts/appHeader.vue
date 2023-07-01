@@ -9,16 +9,36 @@
         </div>
         <div class="column is-10 is-vcentered">
           <div class="buttons is-right tool-buttons">
-            <a
-              href="#"
+            <nuxt-link
+              v-if="!store.isAuth"
               class="button is-link"
-              @click="isShowSignInModal = !isShowSignInModal"
+              :to="{ path: '/signin' }"
             >
               <span class="icon">
                 <i class="fa fa-sign-in"></i>
               </span>
               <span>Sign In</span>
-            </a>
+            </nuxt-link>
+            <nuxt-link
+              v-if="store.isAuth"
+              class="button is-link"
+              :to="{ path: '/tenders/create' }"
+            >
+              <span class="icon">
+                <i class="fa fa-business-time"></i>
+              </span>
+              <span>Create tender</span>
+            </nuxt-link>
+            <nuxt-link
+              v-if="store.isAuth"
+              class="button user-account"
+              :to="{ path: '/account' }"
+            >
+              <span class="icon">
+                <i class="fa fa-user"></i>
+              </span>
+              <span>{{ store.user.firstName }} {{ store.user.lastName }}</span>
+            </nuxt-link>
           </div>
         </div>
       </div>
@@ -32,7 +52,12 @@
             <h4 class="title is-4 has-text-centered">Sign In</h4>
             <EInput v-model:value="email" label="E-mail" name="email" />
             <div class="password">
-              <EInput v-model:value="password" label="Password" name="password" field-type="password" />
+              <EInput
+                v-model:value="password"
+                label="Password"
+                name="password"
+                field-type="password"
+              />
             </div>
             <!-- <ESelect
               :values="{
@@ -55,8 +80,10 @@
         @click="isShowSignInModal = !isShowSignInModal"
       ></button>
     </div>
-    <div :class="['notification is-info', isShowNotification ? 'is-active' : '']">
-      <button class="delete" @click="this.isShowNotification = false"></button>
+    <div
+      :class="['notification is-info', isShowNotification ? 'is-active' : '']"
+    >
+      <button class="delete" @click="isShowNotification = false"></button>
       Enter your e-mail and password!
     </div>
   </header>
@@ -64,12 +91,16 @@
 
 <script lang="ts">
 import EInput from "@/components/form/EInput.vue";
-import ESelect from "@/components/form/ESelect.vue";
-import ECheckbox from "@/components/form/ECheckbox.vue";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   name: "AppHeader",
-  components: { EInput, ESelect, ECheckbox },
+  components: { EInput },
+  setup() {
+    return {
+      store: useUserStore(),
+    };
+  },
   data: () => {
     return {
       isShowSignInModal: false,
@@ -80,9 +111,10 @@ export default defineComponent({
   },
   methods: {
     signin() {
-      if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password == "") this.isShowNotification = true
-    }
-  }
+      if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "")
+        this.isShowNotification = true;
+    },
+  },
 });
 </script>
 
@@ -101,6 +133,12 @@ header {
       transition: all 0.3s;
       background: #f7b452;
 
+      &.user-account {
+        background: none !important;
+        color: #273038 !important;
+        border: 0;
+      }
+
       &:hover {
         background: #273038;
       }
@@ -114,8 +152,8 @@ header {
     z-index: 100;
     transform: translateX(120%);
     transition: all 0.5s ease-in-out;
-    background-color: #546B64;
-    
+    background-color: #546b64;
+
     &.is-active {
       -webkit-transform: translateX(0%);
       -moz-transform: translateX(0%);
