@@ -59,3 +59,79 @@ button {
 .title {
   color: #273038;
 }
+
+.steps-menu {
+  ul {
+    margin: 0;
+    list-style-type: none;
+
+    li {
+      padding: 10px;
+      padding-left: 20px;
+      margin: 0;
+      transition: all 0.3s;
+
+      .disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      &.is-active {
+        background: #f7b452;
+
+        a {
+          color: #fff;
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: #f7b452;
+
+        a {
+          color: #fff;
+        }
+      }
+
+      a {
+        color: #273038;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .buttons {
+    margin-top: 20px;
+  }
+}
+
+.menu-container {
+  padding: 0;
+}
+
+.loader-wrapper {
+  margin: 40px auto;
+  height: 80px;
+  width: 80px;
+  background: #fff;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s;
+  border-radius: 6px;
+
+  .loader {
+    height: 80px;
+    width: 80px;
+    border: 2px solid #e5c076;
+    border-right-color: transparent;
+    border-top-color: transparent;
+  }
+
+  &.is-active {
+    opacity: 1;
+    z-index: 1;
+  }
+}

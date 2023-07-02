@@ -18,8 +18,4 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     const json = await userRequest.json();
     store.updateInfo(json.data);
   }
-
-  if (store.isAuth && to.path === "/signin") {
-    return navigateTo("/account");
-  }
 });

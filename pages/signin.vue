@@ -15,18 +15,7 @@
               field-type="password"
             />
           </div>
-          <!-- <ESelect
-            :values="{
-              buyer: 'Buyer',
-              supplier: 'Supplier',
-              auditor: 'Auditor',
-            }"
-            name="user_type"
-            label="Person type"
-          /> -->
-          <!-- <ECheckbox label="I agree with ..." /> -->
           <button class="button" @click="signin">Submit</button>
-          <!-- <a href="#" class="signin-link">Sign In</a> -->
         </div>
       </div>
     </div>
@@ -95,7 +84,7 @@ export default defineComponent({
       const data = await authReq.json();
       const store = useUserStore();
       store.setToken(data.data);
-      // store.updateInfo({}, )
+      navigateTo("/account");
     },
   },
 });
