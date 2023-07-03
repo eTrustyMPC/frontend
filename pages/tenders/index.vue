@@ -7,26 +7,20 @@
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
-        <div class="tenders-list columns">
-          <div v-for="tender in tenders" :key="tender" class="card column is-4">
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <img
-                  src="https://bulma.io/images/placeholders/1280x960.png"
-                  alt="Placeholder image"
-                />
-              </figure>
+        <div v-if="!pending" class="tenders-list">
+          <nuxt-link
+            v-for="tender in tenders"
+            :key="tender"
+            class="box"
+            :to="{ path: `/tenders/${tender.Id}` }"
+          >
+            <h4 class="title is-4">{{ tender.title }}</h4>
+            <b>Criterions</b>
+            <br />
+            <div v-for="criterion in tender.award_criterions" :key="criterion">
+              {{ criterion.title }}
             </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-content">
-                  <p class="title is-5">{{ tender.title }}</p>
-                </div>
-              </div>
-
-              <div class="content"></div>
-            </div>
-          </div>
+          </nuxt-link>
         </div>
       </div>
     </div>
@@ -52,45 +46,27 @@ const { data: tenders, pending } = useFetch(() => `${baseURL}/api/v1/tenders`, {
   default: () => [],
   transform: (result) => result.data,
 });
-// export default {
-//   name: "Tenders",
-//   components: { AccountMenu },
-//   setup() {
-//     const store = useUserStore();
-//     const config = useRuntimeConfig();
-//     const baseURL = config.public.baseURL;
-//     const token = store.token;
-
-//     const { data: tenders, pending } = useFetch(
-//       () => `${baseURL}/api/v1/tenders`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//         transform: (result) => result.data,
-//       }
-//     );
-
-//     return { tenders, pending };
-//   },
-//   data: () => {
-//     return {};
-//   },
-//   computed: {},
-//   methods: {},
-// };
 </script>
 
 <style lang="scss">
 .tenders-list {
   padding: 0 10px 30px 10px;
 
-  .card {
-    margin-right: 10px;
+  .box {
+    transition: 0.3s all;
 
-    .card-content {
-      padding: 0;
-      margin-top: 10px;
+    h4 {
+      transition: 0.3s all;
+    }
+
+    &:hover {
+      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px #e5c076;
+      background: #e5c076;
+      color: #fff;
+
+      h4 {
+        color: #fff;
+      }
     }
   }
 }
