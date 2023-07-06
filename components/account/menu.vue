@@ -27,7 +27,7 @@ export default defineComponent({
     return {
       items: {
         account: "Account",
-        tenders: "My tenders",
+        "account/tenders": "My tenders",
       },
       router: useRoute(),
     };
