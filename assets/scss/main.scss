@@ -45,6 +45,12 @@ button {
   }
 }
 
+.menu-container {
+  &.box {
+    padding: 0;
+  }
+}
+
 .button {
   &.next-step {
     transition: all 0.4s;
