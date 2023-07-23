@@ -165,24 +165,5 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
     color: #273038;
     text-decoration: underline;
   }
-
-  .notification {
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-    z-index: 100;
-    transform: translateX(120%);
-    transition: all 0.5s ease-in-out;
-    background-color: #546b64;
-
-    &.is-active {
-      -webkit-transform: translateX(0%);
-      -moz-transform: translateX(0%);
-      transform: translateX(0%);
-      -webkit-transition: all 0.5s ease-in-out;
-      -moz-transition: all 0.5s ease-in-out;
-      transition: all 0.5s ease-in-out;
-    }
-  }
 }
 </style>

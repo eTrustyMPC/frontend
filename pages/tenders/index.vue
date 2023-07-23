@@ -8,30 +8,50 @@
         </div>
         <div class="filter-item">
           <label class="label">Types</label>
-          <ECheckbox label="Active" name="isActive" />
-          <ECheckbox label="Finished" />
-          <ECheckbox label="Draft" />
-          <ECheckbox label="Canceled" />
+          <ERadio
+            v-model:type="tenderType"
+            label="Active"
+            name="type"
+            value="ACTIVE"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Finished"
+            name="type"
+            value="FINISHED"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Draft"
+            name="type"
+            value="DRAFT"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Canceled"
+            name="type"
+            value="CANCELED"
+          />
         </div>
         <div class="buttons is-centered">
-          <button class="button reset">Reset</button>
-          <button class="button apply">Apply</button>
+          <button class="button reset" @click="resetFilter">Reset</button>
+          <button class="button apply" @click="applyFilter">Apply</button>
         </div>
       </div>
       <div class="column is-8 box tenders-container">
         <!-- <ESelect :values="{asc: ''}"/> -->
-        <div v-if="pending" class="loader-wrapper is-active">
+        <div v-if="isLoading" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
-        <div v-if="!pending" class="tenders-list">
+        <div v-if="!isLoading" class="tenders-list">
           <nuxt-link
             v-for="tender in tenders"
             :key="tender"
             class="box"
-            :to="{ path: `/tenders/${tender.Id}` }"
+            :to="{ path: `/tenders/${tender.id}` }"
           >
-            <h4 class="title is-4">{{ tender.title }}</h4>
-            <b>Organization: prisma</b>
+            <h4 class="title is-4">{{ tender.attributes.title }}</h4>
+            <b>Organization: {{ tender.attributes.organizationId }}</b>
           </nuxt-link>
         </div>
       </div>
@@ -40,24 +60,50 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick } from "vue";
-import ECheckbox from "@/components/form/ECheckbox.vue";
-import { useUserStore } from "@/stores/user";
+import { nextTick, ref } from "vue";
+import ERadio from "@/components/form/ERadio.vue";
 
 await nextTick();
 
-const store = useUserStore();
-const config = useRuntimeConfig();
-const baseURL = config.public.baseURL;
-const token = store.token;
+const tendersURL = "https://backend-ten-swart.vercel.app/api/tender";
+const pageLimit = 100;
+let pageOffset = 0;
+const nextLink = ref(null);
+const tenderType = ref(null);
+const tenders = ref([]);
+const isLoading = ref(true);
 
-const { data: tenders, pending } = useFetch(() => `${baseURL}/api/v1/tenders`, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  default: () => [],
-  transform: (result) => result.data,
-});
+function getTenders() {
+  const url = new URL(tendersURL);
+  if (tenderType.value)
+    url.searchParams.append("filter[status]", tenderType.value);
+  url.searchParams.append("page[limit]", pageLimit);
+  url.searchParams.append("page[offset]", pageOffset);
+  useFetch(() => url.href, {
+    default: () => [],
+    onResponse({ response }) {
+      isLoading.value = false;
+      nextLink.value = response._data.links.next;
+      tenders.value = [...tenders.value, ...response._data.data];
+    },
+  });
+}
+
+function resetFilter() {
+  pageOffset = 0;
+  tenderType.value = null;
+  isLoading.value = true;
+  tenders.value = [];
+  getTenders();
+}
+
+function applyFilter() {
+  isLoading.value = true;
+  tenders.value = [];
+  getTenders();
+}
+
+getTenders();
 </script>
 
 <style lang="scss">
@@ -107,8 +153,9 @@ const { data: tenders, pending } = useFetch(() => `${baseURL}/api/v1/tenders`, {
   .filter-item {
     padding: 15px;
 
-    .checkbox {
+    .radio {
       display: block;
+      margin-left: 0;
     }
   }
 }

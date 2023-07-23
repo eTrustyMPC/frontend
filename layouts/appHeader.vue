@@ -9,6 +9,12 @@
         </div>
         <div class="column is-10 is-vcentered">
           <div class="buttons is-right tool-buttons">
+            <nuxt-link class="button is-link" :to="{ path: '/tenders/create' }">
+              <span class="icon">
+                <i class="fa fa-business-time"></i>
+              </span>
+              <span>Create tender</span>
+            </nuxt-link>
             <nuxt-link
               v-if="!store.isAuth"
               class="button is-link"
@@ -18,16 +24,6 @@
                 <i class="fa fa-sign-in"></i>
               </span>
               <span>Sign In</span>
-            </nuxt-link>
-            <nuxt-link
-              v-if="store.isAuth"
-              class="button is-link"
-              :to="{ path: '/tenders/create' }"
-            >
-              <span class="icon">
-                <i class="fa fa-business-time"></i>
-              </span>
-              <span>Create tender</span>
             </nuxt-link>
             <nuxt-link
               v-if="store.isAuth"

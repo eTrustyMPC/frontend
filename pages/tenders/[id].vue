@@ -20,13 +20,13 @@
         </div>
         <div v-if="!pending" class="tender-info">
           <div v-if="activeItem == 0" class="tender-info-section">
-            <h3 class="title is-4">{{ tender.title }}</h3>
-            <div class="tender-info-option">
+            <h3 class="title is-4">{{ tender.attributes.title }}</h3>
+            <!-- <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-circle-info"></i>
               </span>
               <span>Draft</span>
-            </div>
+            </div> -->
             <div class="tender-info-option description">
               <span class="icon">
                 <i class="fa fa-comment"></i>
@@ -48,13 +48,13 @@
               <span class="icon">
                 <i class="fa fa-envelope"></i>
               </span>
-              <span>asd@example.com</span>
+              <span>{{ tender.attributes.ownerId }}</span>
             </div>
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-building"></i>
               </span>
-              <span>prisma</span>
+              <span>{{ tender.attributes.organizationId }}</span>
             </div>
           </div>
         </div>
@@ -71,15 +71,13 @@ const route = useRoute();
 await nextTick();
 
 const store = useUserStore();
-const config = useRuntimeConfig();
-const baseURL = config.public.baseURL;
 const token = store.token;
 const tenderId = route.params.id;
 const activeItem = ref(0);
 const menuItems = ["Information", "Lot information", "Lot criterions"];
 
 const { data: tender, pending } = useFetch(
-  () => `${baseURL}/api/v1/tenders/${tenderId}`,
+  () => `https://backend-ten-swart.vercel.app/api/tender/${tenderId}`,
   {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -116,6 +114,7 @@ function choseMenuItem(idx) {
   .icon {
     margin-right: 5px;
     justify-content: left;
+    color: #e5c076;
   }
 }
 </style>
