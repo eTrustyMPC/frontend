@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
-  app: {
-    baseURL: "/tenders",
+  router: {
+    base: "/tenders",
   },
   css: [{ src: "~/assets/scss/main.scss", lang: "scss" }],
   typescript: {
