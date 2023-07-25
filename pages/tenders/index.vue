@@ -1,7 +1,7 @@
 <template>
   <div class="container wrapper">
     <h3 class="page-title title is-4">Tenders</h3>
-    <div class="columns">
+    <div class="columns tenders-columns">
       <div class="column box tenders-filter">
         <div class="filter-title">
           <h5 class="title is-5">Filters</h5>
@@ -40,10 +40,7 @@
       </div>
       <div class="column is-8 box tenders-container">
         <!-- <ESelect :values="{asc: ''}"/> -->
-        <div v-if="isLoading" class="loader-wrapper is-active">
-          <div class="loader is-loading"></div>
-        </div>
-        <div v-if="!isLoading" class="tenders-list">
+        <div v-if="tenders" class="tenders-list">
           <nuxt-link
             v-for="tender in tenders"
             :key="tender"
@@ -53,6 +50,14 @@
             <h4 class="title is-4">{{ tender.attributes.title }}</h4>
             <b>Organization: {{ tender.attributes.organizationId }}</b>
           </nuxt-link>
+          <div v-if="isNextPage && !isLoading" class="buttons is-centered">
+            <button class="button add-more-tenders" @click="loadTenders">
+              Add more
+            </button>
+          </div>
+        </div>
+        <div v-if="isLoading" class="loader-wrapper is-active">
+          <div class="loader is-loading"></div>
         </div>
       </div>
     </div>
@@ -66,9 +71,9 @@ import ERadio from "@/components/form/ERadio.vue";
 await nextTick();
 
 const tendersURL = "https://backend-ten-swart.vercel.app/api/tender";
-const pageLimit = 100;
+const pageLimit = 10;
 let pageOffset = 0;
-const nextLink = ref(null);
+const isNextPage = ref(null);
 const tenderType = ref(null);
 const tenders = ref([]);
 const isLoading = ref(true);
@@ -83,7 +88,7 @@ function getTenders() {
     default: () => [],
     onResponse({ response }) {
       isLoading.value = false;
-      nextLink.value = response._data.links.next;
+      isNextPage.value = !!response._data.links.next;
       tenders.value = [...tenders.value, ...response._data.data];
     },
   });
@@ -103,10 +108,19 @@ function applyFilter() {
   getTenders();
 }
 
+function loadTenders() {
+  isLoading.value = true;
+  pageOffset += pageLimit;
+  getTenders();
+}
+
 getTenders();
 </script>
 
 <style lang="scss">
+.tenders-columns {
+  align-items: flex-start;
+}
 .tenders-container {
   margin-left: auto;
 }
@@ -175,6 +189,18 @@ getTenders();
       h4 {
         color: #fff;
       }
+    }
+  }
+
+  .add-more-tenders {
+    background: #e5c076;
+    color: #fff;
+    border: 1px solid #e5c076;
+    transition: 0.3s all;
+
+    &:hover {
+      background: #fff;
+      color: #273038;
     }
   }
 }
