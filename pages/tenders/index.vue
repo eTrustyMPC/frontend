@@ -13,24 +13,28 @@
             label="Active"
             name="type"
             value="ACTIVE"
+            :is-checked="tenderType == 'ACTIVE'"
           />
           <ERadio
             v-model:type="tenderType"
             label="Finished"
             name="type"
             value="FINISHED"
+            :is-checked="tenderType == 'FINISHED'"
           />
           <ERadio
             v-model:type="tenderType"
             label="Draft"
             name="type"
             value="DRAFT"
+            :is-checked="tenderType == 'DRAFT'"
           />
           <ERadio
             v-model:type="tenderType"
             label="Canceled"
             name="type"
             value="CANCELED"
+            :is-checked="tenderType == 'CANCELED'"
           />
         </div>
         <div class="buttons is-centered">
@@ -50,7 +54,7 @@
             <h4 class="title is-4">{{ tender.attributes.title }}</h4>
             <b>Organization: {{ tender.attributes.organizationId }}</b>
           </nuxt-link>
-          <div v-if="isNextPage && !isLoading" class="buttons is-centered">
+          <div v-if="hasNextPage && !isLoading" class="buttons is-centered">
             <button class="button add-more-tenders" @click="loadTenders">
               Add more
             </button>
@@ -73,8 +77,10 @@ await nextTick();
 const tendersURL = "https://backend-ten-swart.vercel.app/api/tender";
 const pageLimit = 10;
 let pageOffset = 0;
-const isNextPage = ref(null);
-const tenderType = ref(null);
+const hasNextPage = ref(null);
+const route = useRoute();
+const router = useRouter();
+const tenderType = ref(route.query.type ? route.query.type : null);
 const tenders = ref([]);
 const isLoading = ref(true);
 
@@ -88,7 +94,7 @@ function getTenders() {
     default: () => [],
     onResponse({ response }) {
       isLoading.value = false;
-      isNextPage.value = !!response._data.links.next;
+      hasNextPage.value = !!response._data.links.next;
       tenders.value = [...tenders.value, ...response._data.data];
     },
   });
@@ -100,12 +106,15 @@ function resetFilter() {
   isLoading.value = true;
   tenders.value = [];
   getTenders();
+  router.push({ query: null });
 }
 
 function applyFilter() {
+  pageOffset = 0;
   isLoading.value = true;
   tenders.value = [];
   getTenders();
+  router.push({ query: { type: tenderType.value } });
 }
 
 function loadTenders() {

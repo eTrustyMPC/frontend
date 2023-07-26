@@ -4,6 +4,7 @@
       type="radio"
       :value="value"
       :name="name"
+      :checked="isChecked"
       @change="(event) => $emit('update:type', event.target.value)"
     />{{ label }}
     <i class="fa fa-check"></i>
@@ -25,6 +26,10 @@ export default defineComponent({
     value: {
       type: String,
       required: true,
+    },
+    isChecked: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ["change"],

@@ -13,8 +13,8 @@
               <div class="column is-3">Identifier</div>
               <div class="column is-3">Sender</div>
               <div class="column is-2">Contract address</div>
-              <div class="column is-1">Action</div>
-              <div class="column is-3">Date</div>
+              <div class="column is-2">Action</div>
+              <div class="column is-2">Date</div>
             </div>
           </div>
           <div
@@ -47,12 +47,12 @@
                   </span>
                 </a>
               </div>
-              <div class="column is-1">
+              <div class="column is-2">
                 {{
                   transaction.node.event ? transaction.node.event.action : ""
                 }}
               </div>
-              <div class="column is-3">
+              <div class="column is-2">
                 {{
                   moment
                     .unix(transaction.node.productionTime / 1000)
