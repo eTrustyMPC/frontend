@@ -56,7 +56,7 @@
           </nuxt-link>
           <div v-if="hasNextPage && !isLoading" class="buttons is-centered">
             <button class="button add-more-tenders" @click="loadTenders">
-              Add more
+              View more
             </button>
           </div>
         </div>
@@ -198,18 +198,6 @@ getTenders();
       h4 {
         color: #fff;
       }
-    }
-  }
-
-  .add-more-tenders {
-    background: #e5c076;
-    color: #fff;
-    border: 1px solid #e5c076;
-    transition: 0.3s all;
-
-    &:hover {
-      background: #fff;
-      color: #273038;
     }
   }
 }

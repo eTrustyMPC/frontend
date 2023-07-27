@@ -21,13 +21,13 @@
         <div v-if="!pending" class="tender-info">
           <div v-if="activeItem == 0" class="tender-info-section">
             <h3 class="title is-4">{{ tender.attributes.title }}</h3>
-            <!-- <div class="tender-info-option">
+            <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-circle-info"></i>
               </span>
-              <span>Draft</span>
-            </div> -->
-            <div class="tender-info-option description">
+              <span>{{ tender.attributes.status }}</span>
+            </div>
+            <!-- <div class="tender-info-option description">
               <span class="icon">
                 <i class="fa fa-comment"></i>
               </span>
@@ -43,7 +43,7 @@
                 recently with desktop publishing software like Aldus PageMaker
                 including versions of Lorem Ipsum.</span
               >
-            </div>
+            </div> -->
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-envelope"></i>

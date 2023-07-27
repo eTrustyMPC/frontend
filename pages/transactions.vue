@@ -4,10 +4,7 @@
     <div class="columns">
       <div class="column box transactions-container">
         <!-- <ESelect :values="{asc: ''}"/> -->
-        <div v-if="pending" class="loader-wrapper is-active">
-          <div class="loader is-loading"></div>
-        </div>
-        <div v-if="!pending" class="transactions-list">
+        <div v-if="transactions" class="transactions-list">
           <div class="box header">
             <div class="columns">
               <div class="column is-3">Identifier</div>
@@ -62,6 +59,14 @@
             </div>
           </div>
         </div>
+        <div v-if="hasNextPage && !isLoading" class="buttons is-centered">
+          <button class="button add-more-button" @click="getTransactions">
+            View more
+          </button>
+        </div>
+        <div v-if="isLoading" class="loader-wrapper is-active">
+          <div class="loader is-loading"></div>
+        </div>
       </div>
     </div>
     <div :class="['notification ', isNotification ? 'is-active' : '']">
@@ -80,6 +85,10 @@ await nextTick();
 const url = "https://backend.browser.partisiablockchain.com/graphql/query";
 const isNotification = ref(false);
 const notificationText = ref("");
+const afterPage = ref(null);
+const transactions = ref([]);
+const isLoading = ref(true);
+const hasNextPage = ref(false);
 
 function subHash(hash) {
   return hash.substr(0, 4) + "..." + hash.substr(-3);
@@ -92,18 +101,35 @@ function copyHash(hash) {
   setTimeout(() => (isNotification.value = false), 3000);
 }
 
-const { data: transactions, pending } = useFetch(() => url, {
-  method: "POST",
-  body: JSON.stringify({
-    query:
-      'query TransactionOverviewQuery { ...TransactionTablePagination_Query } fragment TransactionTablePagination_Query on Query { latestTransactions(first: 20, after: "") { pageInfo { hasNextPage endCursor } edges { node { identifier productionTime executionSucceeded from contractId event { action id } id __typename } cursor } } }',
-  }),
-  default: () => [],
-  transform: (result) => result.data.latestTransactions.edges,
-});
+function getTransactions() {
+  isLoading.value = true;
+  const body = {
+    query: `query TransactionPaginationQuery( $after: String = "" $filter: TransactionFilter = null $first: Int = 20 ) { ...TransactionTablePagination_Query_G9cLv } fragment TransactionTablePagination_Query_G9cLv on Query { latestTransactions(first: $first, after: $after, filter: $filter) { pageInfo { hasNextPage endCursor } edges { node { identifier productionTime executionSucceeded from contractId event { action id } id __typename } cursor } } }`,
+  };
+  if (afterPage.value) body.variables = { after: afterPage.value, first: 20 };
+  useFetch(() => url, {
+    method: "POST",
+    body: JSON.stringify(body),
+    default: () => [],
+    onResponse({ response }) {
+      const latestTransactions = response._data.data.latestTransactions;
+      isLoading.value = false;
+      afterPage.value = latestTransactions.pageInfo.endCursor;
+      hasNextPage.value = latestTransactions.pageInfo.hasNextPage;
+      transactions.value = [...transactions.value, ...latestTransactions.edges];
+    },
+  });
+}
+
+getTransactions();
 </script>
 
 <style lang="scss">
+.transactions-container {
+  .buttons {
+    margin-top: 40px;
+  }
+}
 .transactions-filter {
   padding: 0 0 20px 0;
   max-width: 320px;

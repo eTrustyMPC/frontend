@@ -4,10 +4,26 @@
       <div class="columns">
         <div class="column is-2">
           <div class="logo">
-            <img src="/header-logo.png" />
+            <nuxt-link :to="{ path: '/' }">
+              <img src="/header-logo.png" />
+            </nuxt-link>
           </div>
         </div>
-        <div class="column is-10 is-vcentered">
+        <div class="column is-7 is-vcentered">
+          <ul class="main-menu">
+            <li>
+              <nuxt-link active-class="active" :to="{ path: '/tenders' }"
+                >Tenders</nuxt-link
+              >
+            </li>
+            <li>
+              <nuxt-link active-class="active" :to="{ path: '/transactions' }"
+                >Transactions</nuxt-link
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="column is-3 is-vcentered">
           <div class="buttons is-right tool-buttons">
             <nuxt-link class="button is-link" :to="{ path: '/tenders/create' }">
               <span class="icon">
