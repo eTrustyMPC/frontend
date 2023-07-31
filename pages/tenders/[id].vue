@@ -20,12 +20,12 @@
         </div>
         <div v-if="!pending" class="tender-info">
           <div v-if="activeItem == 0" class="tender-info-section">
-            <h3 class="title is-4">{{ tender.attributes.title }}</h3>
+            <h3 class="title is-4">{{ tender.title }}</h3>
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-circle-info"></i>
               </span>
-              <span>{{ tender.attributes.status }}</span>
+              <span>{{ tender.status }}</span>
             </div>
             <!-- <div class="tender-info-option description">
               <span class="icon">
@@ -48,13 +48,54 @@
               <span class="icon">
                 <i class="fa fa-envelope"></i>
               </span>
-              <span>{{ tender.attributes.ownerId }}</span>
+              <span>{{ tender.ownerId }}</span>
             </div>
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-building"></i>
               </span>
-              <span>{{ tender.attributes.organizationId }}</span>
+              <span>{{ tender.organizationId }}</span>
+            </div>
+          </div>
+          <div v-if="activeItem == 1 && lot" class="tender-info-section">
+            <h3 class="title is-5">{{ lot.title }}</h3>
+            <div class="tender-info-option description">
+              <span class="icon">
+                <i class="fa fa-comment"></i>
+              </span>
+              <span>{{ lot.description }}</span>
+            </div>
+          </div>
+          <div v-if="activeItem == 2 && criterions" class="tender-info-section">
+            <div
+              v-for="criterion in criterions"
+              :key="criterion"
+              class="criterion-item"
+            >
+              <div class="tender-info-option description">
+                <span class="icon">
+                  <i class="fa fa-heading"></i>
+                </span>
+                <span>{{ criterion.name }}</span>
+              </div>
+              <div class="tender-info-option description">
+                <span class="icon">
+                  <i class="fa fa-comment"></i>
+                </span>
+                <span>{{ criterion.title }}</span>
+              </div>
+              <div class="tender-info-option description">
+                <span class="icon">
+                  <i class="fa fa-star"></i>
+                </span>
+                <span>{{ criterion.scoreType.toLowerCase() }}</span>
+              </div>
+              <div class="tender-info-option description">
+                <span class="icon">
+                  <i class="fa fa-code-compare"></i>
+                </span>
+                <span>{{ criterion.agregationType.toLowerCase() }}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -65,25 +106,49 @@
 
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
-import { useUserStore } from "@/stores/user";
 
 const route = useRoute();
 await nextTick();
 
-const store = useUserStore();
-const token = store.token;
 const tenderId = route.params.id;
 const activeItem = ref(0);
+const lot = ref(null);
+const criterions = ref([]);
 const menuItems = ["Information", "Lot information", "Lot criterions"];
 
 const { data: tender, pending } = useFetch(
   () => `https://backend-ten-swart.vercel.app/api/tender/${tenderId}`,
   {
-    headers: {
-      Authorization: `Bearer ${token}`,
+    default: () => {},
+    transform: (result) => result.data.attributes,
+    async onResponse({ response }) {
+      if (response._data.data.relationships.lots.data.length === 0) return;
+
+      const lotId = response._data.data.relationships.lots.data[0].id;
+      const { data: info } = await useFetch(
+        () => `https://backend-ten-swart.vercel.app/api/lot/${lotId}`,
+        {
+          default: () => {},
+          transform: (result) => result.data.attributes,
+          onResponse({ response }) {
+            response._data.data.relationships.criterions.data.forEach(
+              (criterion) => {
+                useFetch(
+                  () =>
+                    `https://backend-ten-swart.vercel.app/api/criterion/${criterion.id}`,
+                  {
+                    onResponse({ response }) {
+                      criterions.value.push(response._data.data.attributes);
+                    },
+                  }
+                );
+              }
+            );
+          },
+        }
+      );
+      lot.value = info.value;
     },
-    default: () => [],
-    transform: (result) => result.data,
   }
 );
 
@@ -116,5 +181,9 @@ function choseMenuItem(idx) {
     justify-content: left;
     color: #e5c076;
   }
+}
+
+.criterion-item {
+  margin-bottom: 30px;
 }
 </style>

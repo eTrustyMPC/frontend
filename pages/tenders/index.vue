@@ -75,7 +75,7 @@ import ERadio from "@/components/form/ERadio.vue";
 await nextTick();
 
 const tendersURL = "https://backend-ten-swart.vercel.app/api/tender";
-const pageLimit = 10;
+const pageLimit = 3;
 let pageOffset = 0;
 const hasNextPage = ref(null);
 const route = useRoute();
