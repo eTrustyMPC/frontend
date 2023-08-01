@@ -16,11 +16,11 @@
                 >Tenders</nuxt-link
               >
             </li>
-            <li>
+            <!-- <li>
               <nuxt-link active-class="active" :to="{ path: '/transactions' }"
                 >Transactions</nuxt-link
               >
-            </li>
+            </li> -->
           </ul>
         </div>
         <div class="column is-3 is-vcentered">

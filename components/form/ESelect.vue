@@ -2,8 +2,13 @@
   <div class="select-field">
     <label v-if="label" class="label">{{ label }}</label>
     <div class="select">
-      <select>
-        <option v-for="(key, v) in values" :key="key" :value="v">
+      <select @change="(event) => $emit('update:value', event.target.value)">
+        <option
+          v-for="(key, v) in values"
+          :key="key"
+          :value="v"
+          :selected="selected == v"
+        >
           {{ key }}
         </option>
       </select>
@@ -26,6 +31,10 @@ export default defineComponent({
       default: "",
     },
     label: {
+      type: String,
+      default: "",
+    },
+    selected: {
       type: String,
       default: "",
     },

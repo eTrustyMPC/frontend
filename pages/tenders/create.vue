@@ -39,18 +39,25 @@
             />
           </div>
         </div>
-        <div v-if="numberStep == 2" class="step-container">
+        <div
+          v-if="numberStep == 2 && !isPending && !isCreated"
+          class="step-container"
+        >
           <h4 class="title is-4">Lot criterions</h4>
           <div v-for="(c, key) in criterions" :key="key" class="criterion-info">
             <EInput v-model:value="c.title" label="Title" />
             <EInput v-model:value="c.name" label="Name" />
             <ESelect
+              v-model:value="c.type"
               label="Type"
-              :values="{ boolean: 'Boolean', number: 'Number' }"
+              selected="NUMBER"
+              :values="{ NUMBER: 'Number', BOOLEAN: 'Boolean' }"
             />
             <ESelect
+              v-model:value="c.aggType"
               label="Aggregation type"
-              :values="{ sum: 'Sum', min: 'Min', max: 'Max', avg: 'Avg' }"
+              selected="AVG"
+              :values="{ AVG: 'Avg', SUM: 'Sum', MIN: 'Min', MAX: 'Max' }"
             />
             <hr v-if="key != criterions.length - 1" />
             <a
@@ -65,7 +72,15 @@
             </a>
           </div>
         </div>
-        <div class="buttons">
+        <div v-if="isPending" class="loader-wrapper is-active">
+          <div class="loader is-loading"></div>
+        </div>
+        <div v-if="isCreated" class="created-status">
+          <span class="icon">
+            <i class="fa fa-check"></i>
+          </span>
+        </div>
+        <div v-if="!isPending && !isCreated" class="buttons">
           <button
             v-if="numberStep != 0"
             class="button next-step"
@@ -99,7 +114,11 @@
             <span>Add criterion</span>
           </button>
 
-          <button v-if="(numberStep == maxStep) & isStepValid" class="button">
+          <button
+            v-if="(numberStep == maxStep) & isStepValid"
+            class="button"
+            @click="create"
+          >
             Create
           </button>
         </div>
@@ -127,18 +146,32 @@ export default defineComponent({
       title: "",
       lotTitle: "",
       lotDescription: "",
+      // title: "Test title 1",
+      // lotTitle: "Lot title 1",
+      // lotDescription:
+      //   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
       isJointProcurement: true,
       disabledItems: [1, 2],
+      isPending: false,
+      isCreated: false,
       criterions: [
         {
           title: "",
           name: "",
-          type: "boolean",
-          aggType: "number",
+          type: "NUMBER",
+          aggType: "AVG",
         },
       ],
+      // criterions: [
+      //   {
+      //     title: "Criterion title 1",
+      //     name: "Criterion name 1",
+      //     type: "NUMBER",
+      //     aggType: "AVG",
+      //   },
+      // ],
       stepNames: [
         "Tender information",
         "Tender lot information",
@@ -182,8 +215,8 @@ export default defineComponent({
       this.criterions.push({
         title: "",
         name: "",
-        type: "boolean",
-        aggType: "number",
+        type: "NUMBER",
+        aggType: "AVG",
       });
     },
     deleteCriterion(removeIdx: Number) {
@@ -194,6 +227,81 @@ export default defineComponent({
     },
     setActiveMenuItem(idx: Number) {
       if (this.isStepValid || idx < this.numberStep) this.numberStep = idx;
+    },
+    async _sendRequest(url, data) {
+      return await useFetch(() => url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+    },
+    async create() {
+      this.isPending = true;
+      const url = this.$config.public.baseURL;
+      const date = new Date();
+      const isoDate = date.toISOString();
+      const { data: tender } = await this._sendRequest(`${url}/api/tender`, {
+        data: {
+          type: "string",
+          attributes: {
+            isDeleted: true,
+            isPublic: true,
+            createdAt: isoDate,
+            updatedAt: isoDate,
+            ownerId: "bryan@prisma.io",
+            organizationId: "prisma",
+            title: this.title,
+            status: "DRAFT",
+          },
+        },
+      });
+      const tenderId = tender.value.data.id;
+      const { data: lot } = await this._sendRequest(`${url}/api/lot`, {
+        data: {
+          type: "string",
+          attributes: {
+            isDeleted: true,
+            isPublic: true,
+            createdAt: isoDate,
+            updatedAt: isoDate,
+            ownerId: "bryan@prisma.io",
+            organizationId: "prisma",
+            title: this.lotTitle,
+            description: this.lotDescription,
+            status: "DRAFT",
+            tenderId,
+          },
+        },
+      });
+      this.criterions.forEach(async (criterion) => {
+        await this._sendRequest(`${url}/api/criterion`, {
+          data: {
+            type: "string",
+            attributes: {
+              isDeleted: true,
+              isPublic: true,
+              createdAt: isoDate,
+              updatedAt: isoDate,
+              ownerId: "bryan@prisma.io",
+              organizationId: "prisma",
+              name: criterion.name,
+              title: criterion.title,
+              scoreType: criterion.type,
+              agregationType: criterion.aggType,
+              lotId: lot.value.data.id,
+            },
+          },
+        });
+      });
+      this.isPending = false;
+      this.isCreated = true;
+      setTimeout(
+        () => this.$router.push({ path: `/tenders/${tenderId}` }),
+        3000
+      );
     },
   },
 });

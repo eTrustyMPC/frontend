@@ -131,7 +131,7 @@ button {
   .loader {
     height: 80px;
     width: 80px;
-    border: 2px solid #e5c076;
+    border: 3px solid #e5c076;
     border-right-color: transparent;
     border-top-color: transparent;
   }
@@ -204,5 +204,25 @@ button {
         color: #f7b452;
       }
     }
+  }
+}
+
+.created-status {
+  margin: 40px auto;
+  width: 80px;
+  height: 80px;
+  border: 3px solid #e5c076;
+  color: #e5c076;
+  border-radius: 50%;
+  position: relative;
+  font-size: 35px;
+
+  span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
   }
 }

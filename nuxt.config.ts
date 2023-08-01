@@ -20,6 +20,13 @@ export default defineNuxtConfig({
           crossorigin: "anonymous",
         },
       ],
+      link: [
+        {
+          rel: "icon",
+          type: "image/x-icon",
+          href: "/etrusty_flavicon_whi.ico",
+        },
+      ],
     },
   },
   router: { middleware: ["auth"] },

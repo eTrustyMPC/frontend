@@ -114,7 +114,12 @@ const tenderId = route.params.id;
 const activeItem = ref(0);
 const lot = ref(null);
 const criterions = ref([]);
-const menuItems = ["Information", "Lot information", "Lot criterions"];
+const menuItems = [
+  "Information",
+  "Lot information",
+  "Lot criterions",
+  "Transactions",
+];
 
 const { data: tender, pending } = useFetch(
   () => `https://backend-ten-swart.vercel.app/api/tender/${tenderId}`,
