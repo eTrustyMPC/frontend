@@ -15,7 +15,7 @@
             :to="{ path: `/tenders/${tender.Id}` }"
           >
             <h4 class="title is-4">{{ tender.title }}</h4>
-            <b>Criterions</b>
+            <b>Criteria</b>
             <br />
             <div v-for="criterion in tender.award_criterions" :key="criterion">
               {{ criterion.title }}
