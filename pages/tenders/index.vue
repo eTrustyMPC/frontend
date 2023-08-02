@@ -52,7 +52,12 @@
             :to="{ path: `/tenders/${tender.id}` }"
           >
             <h4 class="title is-4">{{ tender.attributes.title }}</h4>
-            <b>Organization: {{ tender.attributes.organizationId }}</b>
+            <div class="tender-shot-info">
+              Organization: <b>{{ tender.attributes.organizationId }}</b>
+            </div>
+            <div class="tender-shot-info">
+              Status: <b>{{ tender.attributes.status }}</b>
+            </div>
           </nuxt-link>
           <div v-if="hasNextPage && !isLoading" class="buttons is-centered">
             <button class="button add-more-tenders" @click="loadTenders">

@@ -118,7 +118,7 @@ const menuItems = [
   "Information",
   "Lot information",
   "Lot criterions",
-  "Transactions",
+  // "Transactions",
 ];
 
 const { data: tender, pending } = useFetch(
