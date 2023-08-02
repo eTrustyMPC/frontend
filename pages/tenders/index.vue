@@ -8,13 +8,34 @@
         </div>
         <div class="filter-item">
           <label class="label">Types</label>
-          <ERadio v-model:type="tenderType" label="Active" name="type" value="ACTIVE"
-            :is-checked="tenderType == 'ACTIVE'" />
-          <ERadio v-model:type="tenderType" label="Finished" name="type" value="FINISHED"
-            :is-checked="tenderType == 'FINISHED'" />
-          <ERadio v-model:type="tenderType" label="Draft" name="type" value="DRAFT" :is-checked="tenderType == 'DRAFT'" />
-          <ERadio v-model:type="tenderType" label="Canceled" name="type" value="CANCELED"
-            :is-checked="tenderType == 'CANCELED'" />
+          <ERadio
+            v-model:type="tenderType"
+            label="Active"
+            name="type"
+            value="ACTIVE"
+            :is-checked="tenderType == 'ACTIVE'"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Finished"
+            name="type"
+            value="FINISHED"
+            :is-checked="tenderType == 'FINISHED'"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Draft"
+            name="type"
+            value="DRAFT"
+            :is-checked="tenderType == 'DRAFT'"
+          />
+          <ERadio
+            v-model:type="tenderType"
+            label="Canceled"
+            name="type"
+            value="CANCELED"
+            :is-checked="tenderType == 'CANCELED'"
+          />
         </div>
         <div class="buttons is-centered">
           <button class="button reset" @click="resetFilter">Reset</button>
@@ -24,12 +45,22 @@
       <div class="column is-8 box tenders-container">
         <!-- <ESelect :values="{asc: ''}"/> -->
         <div v-if="tenders" class="tenders-list">
-          <nuxt-link v-for="tender in tenders" :key="tender" class="box" :to="{ path: `/tenders/${tender.id}` }">
-            <div style="display: flex; justify-content: space-between;">
+          <nuxt-link
+            v-for="tender in tenders"
+            :key="tender"
+            class="box"
+            :to="{ path: `/tenders/${tender.id}` }"
+          >
+            <div style="display: flex; justify-content: space-between">
               <h4 class="title is-4">{{ tender.attributes.title }}</h4>
               <div class="status-container">
                 <span class="status-text">{{ tender.attributes.status }}</span>
-                <div :class="['status-icon', getStatusColorClass(tender.attributes.status)]"></div>
+                <div
+                  :class="[
+                    'status-icon',
+                    getStatusColorClass(tender.attributes.status),
+                  ]"
+                ></div>
               </div>
             </div>
             <b>Organization: {{ tender.attributes.organizationId }}</b>
