@@ -36,4 +36,7 @@ export default defineNuxtConfig({
       baseURL: process.env.BASE_URL || "http://localhost:5000",
     },
   },
+  build: {
+    transpile: ["@vuepic/vue-datepicker"],
+  },
 });

@@ -39,10 +39,7 @@
             />
           </div>
         </div>
-        <div
-          v-if="numberStep == 2 && !isPending && !isCreated"
-          class="step-container"
-        >
+        <div v-if="numberStep == 2" class="step-container">
           <h4 class="title is-4">Lot criterions</h4>
           <div v-for="(c, key) in criterions" :key="key" class="criterion-info">
             <EInput v-model:value="c.title" label="Title" />
@@ -70,6 +67,29 @@
                 <i class="fa fa-trash"></i>
               </span>
             </a>
+          </div>
+        </div>
+        <div
+          v-if="numberStep == 3 && !isPending && !isCreated"
+          class="step-container"
+        >
+          <label class="label">Submission dates</label>
+          <VueDatePicker
+            v-model="period"
+            class="range"
+            :enable-time-picker="false"
+            range
+            :partial-range="false"
+            :min-date="new Date()"
+          ></VueDatePicker>
+        </div>
+        <div v-if="numberStep == 4" class="step-container">
+          <div class="tender-main-info">
+            <EInput
+              v-model:value="juryEmail"
+              label="Jury email"
+              name="jury_email"
+            />
           </div>
         </div>
         <div v-if="isPending" class="loader-wrapper is-active">
@@ -104,7 +124,7 @@
             Next
           </button>
           <button
-            v-if="numberStep == maxStep"
+            v-if="numberStep == 2"
             class="button next-step"
             @click="addCriterion()"
           >
@@ -128,6 +148,7 @@
 </template>
 
 <script lang="ts">
+import VueDatePicker from "@vuepic/vue-datepicker";
 import EInput from "@/components/form/EInput.vue";
 import EText from "@/components/form/EText.vue";
 import ESelect from "@/components/form/ESelect.vue";
@@ -138,11 +159,12 @@ export default defineComponent({
     EInput,
     EText,
     ESelect,
+    VueDatePicker,
   },
   data: () => {
     return {
-      numberStep: 0,
-      maxStep: 2,
+      numberStep: 3,
+      maxStep: 4,
       title: "",
       lotTitle: "",
       lotDescription: "",
@@ -153,7 +175,7 @@ export default defineComponent({
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
       isJointProcurement: true,
-      disabledItems: [1, 2],
+      disabledItems: [1, 2, 3, 4],
       isPending: false,
       isCreated: false,
       criterions: [
@@ -172,10 +194,14 @@ export default defineComponent({
       //     aggType: "AVG",
       //   },
       // ],
+      period: null,
+      juryEmail: "",
       stepNames: [
         "Tender information",
         "Tender lot information",
         "Lot criterions",
+        "Submission dates",
+        "Contacts",
       ],
     };
   },
@@ -197,6 +223,12 @@ export default defineComponent({
           }
         }
         return true;
+      }
+      if (this.numberStep === 3) {
+        return this.period && this.period.length !== 0;
+      }
+      if (this.numberStep === 4) {
+        return this.juryEmail.length >= 3;
       }
       return false;
     },
@@ -392,6 +424,11 @@ export default defineComponent({
       color: #fff;
       transition: all 0.3s;
     }
+  }
+}
+.step-container {
+  .range {
+    max-width: 400px;
   }
 }
 </style>

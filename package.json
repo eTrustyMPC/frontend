@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.4.11",
+    "@vuepic/vue-datepicker": "^6.0.0",
     "bulma": "^0.9.4",
     "moment": "^2.29.4",
     "node-sass": "^8.0.0",

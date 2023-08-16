@@ -4,6 +4,7 @@ $input-hover-border-color: rgb(39, 48, 56, 0.5);
 
 // $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 // @import "@fortawesome/fontawesome-free/css/all.css";
+@import "@vuepic/vue-datepicker/dist/main.css";
 @import "./bulma/sass/utilities/_all.sass";
 @import "./bulma/bulma";
 
@@ -224,5 +225,23 @@ button {
     right: 0;
     bottom: 0;
     margin: auto;
+  }
+}
+
+.dp__theme_light {
+  .dp__action_select,
+  .dp__range_end,
+  .dp__range_start,
+  .dp__active_date,
+  .dp__overlay_cell_active {
+    background: #f7b452;
+  }
+
+  .dp__today {
+    border: 1px solid #f7b452;
+  }
+
+  .dp__action_cancel:hover {
+    border-color: #f7b452;
   }
 }
