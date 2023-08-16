@@ -163,7 +163,7 @@ export default defineComponent({
   },
   data: () => {
     return {
-      numberStep: 3,
+      numberStep: 0,
       maxStep: 4,
       title: "",
       lotTitle: "",
