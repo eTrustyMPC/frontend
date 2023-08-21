@@ -26,17 +26,20 @@
           </div>
         </div>
         <div v-if="numberStep == 1" class="step-container">
-          <div class="tender-main-info">
-            <EInput
-              v-model:value="lotTitle"
-              label="Lot title"
-              name="lot_title"
-            />
-            <EText
-              v-model:value="lotDescription"
-              label="Lot description"
-              name="lot_description"
-            />
+          <div v-for="(l, key) in lots" :key="key" class="lot-info">
+            <EInput v-model:value="l.title" label="Lot title" />
+            <EText v-model:value="l.description" label="Lot description" />
+            <a
+              v-if="lots.length > 1"
+              href="#"
+              class="button delete-button"
+              @click="deleteLot(key)"
+            >
+              <span class="icon">
+                <i class="fa fa-trash"></i>
+              </span>
+            </a>
+            <hr v-if="key != lots.length - 1" />
           </div>
         </div>
         <div v-if="numberStep == 2" class="step-container">
@@ -56,23 +59,9 @@
               selected="AVG"
               :values="{ AVG: 'Avg', SUM: 'Sum', MIN: 'Min', MAX: 'Max' }"
             />
-            <hr v-if="key != criterions.length - 1" />
-            <a
-              v-if="criterions.length > 1"
-              href="#"
-              class="button delete-button"
-              @click="deleteCriterion(key)"
-            >
-              <span class="icon">
-                <i class="fa fa-trash"></i>
-              </span>
-            </a>
           </div>
         </div>
-        <div
-          v-if="numberStep == 3 && !isPending && !isCreated"
-          class="step-container"
-        >
+        <div v-if="numberStep == 3" class="step-container">
           <label class="label">Submission dates</label>
           <VueDatePicker
             v-model="period"
@@ -83,13 +72,37 @@
             :min-date="new Date()"
           ></VueDatePicker>
         </div>
-        <div v-if="numberStep == 4" class="step-container">
-          <div class="tender-main-info">
-            <EInput
-              v-model:value="juryEmail"
-              label="Jury email"
-              name="jury_email"
-            />
+        <div
+          v-if="numberStep == 4 && !isPending && !isCreated"
+          class="step-container"
+        >
+          <label class="label">The deadline for estimation submission</label>
+          <VueDatePicker
+            v-model="deadlineDate"
+            class="range"
+            :enable-time-picker="false"
+            :partial-range="false"
+            :min-date="new Date()"
+          ></VueDatePicker>
+          <div class="jury-email">
+            <label class="label">Jury emails</label>
+            <div
+              v-for="(e, key) in juryEmails"
+              :key="key"
+              class="tender-main-info email-row"
+            >
+              <EInput v-model:value="e.email" />
+              <a
+                v-if="juryEmails.length > 1"
+                href="#"
+                class="button delete-button"
+                @click="deleteEmail(key)"
+              >
+                <span class="icon">
+                  <i class="fa fa-trash"></i>
+                </span>
+              </a>
+            </div>
           </div>
         </div>
         <div v-if="isPending" class="loader-wrapper is-active">
@@ -124,14 +137,24 @@
             Next
           </button>
           <button
-            v-if="numberStep == 2"
+            v-if="numberStep == 1"
             class="button next-step"
-            @click="addCriterion()"
+            @click="addLot()"
           >
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add criterion</span>
+            <span>Add lot</span>
+          </button>
+          <button
+            v-if="numberStep == 4"
+            class="button next-step"
+            @click="addJuryEmail()"
+          >
+            <span class="icon">
+              <i class="fa fa-plus"></i>
+            </span>
+            <span>Add email</span>
           </button>
 
           <button
@@ -166,18 +189,29 @@ export default defineComponent({
       numberStep: 0,
       maxStep: 4,
       title: "",
-      lotTitle: "",
-      lotDescription: "",
-      // title: "Test title 1",
-      // lotTitle: "Lot title 1",
-      // lotDescription:
-      //   "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book",
+      // title: "Test t 1",
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
       isJointProcurement: true,
       disabledItems: [1, 2, 3, 4],
       isPending: false,
       isCreated: false,
+      // lots: [
+      //   {
+      //     title: "Lot 1",
+      //     description: "Desc 1",
+      //   },
+      //   {
+      //     title: "Lot 2",
+      //     description: "Desc 2",
+      //   },
+      // ],
+      lots: [
+        {
+          title: "",
+          description: "",
+        },
+      ],
       criterions: [
         {
           title: "",
@@ -195,14 +229,20 @@ export default defineComponent({
       //   },
       // ],
       period: null,
-      juryEmail: "",
+      // period: [new Date(), new Date()],
+      juryEmails: [{ email: "" }],
+      // juryEmails: [{ email: "nikita@etrusty.io" }],
       stepNames: [
         "Tender information",
         "Tender lot information",
-        "Lot criterions",
+        "Lot criterion",
         "Submission dates",
         "Contacts",
       ],
+      deadlineDate: null,
+      // deadlineDate: new Date(),
+      emailRegex:
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     };
   },
   computed: {
@@ -212,7 +252,13 @@ export default defineComponent({
       }
 
       if (this.numberStep === 1) {
-        return this.lotTitle.length >= 3 && this.lotDescription !== "";
+        for (const lidx in this.lots) {
+          const lot = this.lots[lidx];
+          if (lot.title.length < 3 || lot.description.length < 3) {
+            return false;
+          }
+        }
+        return true;
       }
 
       if (this.numberStep === 2) {
@@ -228,7 +274,11 @@ export default defineComponent({
         return this.period && this.period.length !== 0;
       }
       if (this.numberStep === 4) {
-        return this.juryEmail.length >= 3;
+        for (const cidx in this.juryEmails) {
+          const emailInfo = this.juryEmails[cidx];
+          if (!emailInfo.email.match(this.emailRegex)) return false;
+        }
+        return this.deadlineDate && this.deadlineDate.length !== 0;
       }
       return false;
     },
@@ -243,19 +293,28 @@ export default defineComponent({
         );
       }
     },
-    addCriterion() {
-      this.criterions.push({
+    addLot() {
+      this.lots.push({
         title: "",
-        name: "",
-        type: "NUMBER",
-        aggType: "AVG",
+        description: "",
       });
     },
-    deleteCriterion(removeIdx: Number) {
-      const criterions = this.criterions;
-      this.criterions = criterions
+    addJuryEmail() {
+      this.juryEmails.push({
+        email: "",
+      });
+    },
+    deleteLot(removeIdx: Number) {
+      const lots = this.lots;
+      this.lots = lots
         .slice(0, removeIdx)
-        .concat(criterions.slice(removeIdx + 1, criterions.length));
+        .concat(lots.slice(removeIdx + 1, lots.length));
+    },
+    deleteEmail(removeIdx: Number) {
+      const emails = this.juryEmails;
+      this.juryEmails = emails
+        .slice(0, removeIdx)
+        .concat(emails.slice(removeIdx + 1, emails.length));
     },
     setActiveMenuItem(idx: Number) {
       if (this.isStepValid || idx < this.numberStep) this.numberStep = idx;
@@ -291,40 +350,53 @@ export default defineComponent({
         },
       });
       const tenderId = tender.value.data.id;
-      const { data: lot } = await this._sendRequest(`${url}/api/lot`, {
-        data: {
-          type: "string",
-          attributes: {
-            isDeleted: true,
-            isPublic: true,
-            createdAt: isoDate,
-            updatedAt: isoDate,
-            ownerId: "bryan@prisma.io",
-            organizationId: "prisma",
-            title: this.lotTitle,
-            description: this.lotDescription,
-            status: "DRAFT",
-            tenderId,
+      const criterions = this.criterions;
+      const request = this._sendRequest;
+      this.lots.forEach((lot) => {
+        useFetch(() => `${url}/api/lot`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
           },
-        },
-      });
-      this.criterions.forEach(async (criterion) => {
-        await this._sendRequest(`${url}/api/criterion`, {
-          data: {
-            type: "string",
-            attributes: {
-              isDeleted: true,
-              isPublic: true,
-              createdAt: isoDate,
-              updatedAt: isoDate,
-              ownerId: "bryan@prisma.io",
-              organizationId: "prisma",
-              name: criterion.name,
-              title: criterion.title,
-              scoreType: criterion.type,
-              agregationType: criterion.aggType,
-              lotId: lot.value.data.id,
+          body: JSON.stringify({
+            data: {
+              type: "string",
+              attributes: {
+                isDeleted: true,
+                isPublic: true,
+                createdAt: isoDate,
+                updatedAt: isoDate,
+                ownerId: "bryan@prisma.io",
+                organizationId: "prisma",
+                title: lot.title,
+                description: lot.description,
+                status: "DRAFT",
+                tenderId,
+              },
             },
+          }),
+          onResponse({ response }) {
+            criterions.forEach(async (criterion) => {
+              await request(`${url}/api/criterion`, {
+                data: {
+                  type: "string",
+                  attributes: {
+                    isDeleted: true,
+                    isPublic: true,
+                    createdAt: isoDate,
+                    updatedAt: isoDate,
+                    ownerId: "bryan@prisma.io",
+                    organizationId: "prisma",
+                    name: criterion.name,
+                    title: criterion.title,
+                    scoreType: criterion.type,
+                    agregationType: criterion.aggType,
+                    lotId: response._data.data.id,
+                  },
+                },
+              });
+            });
           },
         });
       });
@@ -394,9 +466,24 @@ export default defineComponent({
 
 .tender-main-info {
   max-width: 450px;
+
+  &.email-row {
+    margin-bottom: 20px;
+    position: relative;
+
+    .delete-button {
+      position: absolute;
+      right: -60px;
+      top: 0;
+    }
+  }
 }
 
 .criterion-info {
+  max-width: 450px;
+}
+
+.lot-info {
   position: relative;
 
   .delete-button {
@@ -429,6 +516,10 @@ export default defineComponent({
 .step-container {
   .range {
     max-width: 400px;
+  }
+
+  .jury-email {
+    margin-top: 20px;
   }
 }
 </style>

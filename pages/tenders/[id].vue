@@ -57,13 +57,15 @@
               <span>{{ tender.organizationId }}</span>
             </div>
           </div>
-          <div v-if="activeItem == 1 && lot" class="tender-info-section">
-            <h3 class="title is-5">{{ lot.title }}</h3>
-            <div class="tender-info-option description">
-              <span class="icon">
-                <i class="fa fa-comment"></i>
-              </span>
-              <span>{{ lot.description }}</span>
+          <div v-if="activeItem == 1 && lots" class="tender-info-section">
+            <div v-for="lot in lots" :key="lot">
+              <h3 class="title is-5">{{ lot.title }}</h3>
+              <div class="tender-info-option description">
+                <span class="icon">
+                  <i class="fa fa-comment"></i>
+                </span>
+                <span>{{ lot.description }}</span>
+              </div>
             </div>
           </div>
           <div v-if="activeItem == 2 && criterions" class="tender-info-section">
@@ -112,12 +114,12 @@ await nextTick();
 
 const tenderId = route.params.id;
 const activeItem = ref(0);
-const lot = ref(null);
+const lots = ref([]);
 const criterions = ref([]);
 const menuItems = [
   "Information",
   "Lot information",
-  "Lot criterions",
+  "Lot criterion",
   // "Transactions",
 ];
 
@@ -126,33 +128,30 @@ const { data: tender, pending } = useFetch(
   {
     default: () => {},
     transform: (result) => result.data.attributes,
-    async onResponse({ response }) {
-      if (response._data.data.relationships.lots.data.length === 0) return;
-
-      const lotId = response._data.data.relationships.lots.data[0].id;
-      const { data: info } = await useFetch(
-        () => `https://backend-ten-swart.vercel.app/api/lot/${lotId}`,
-        {
-          default: () => {},
-          transform: (result) => result.data.attributes,
-          onResponse({ response }) {
-            response._data.data.relationships.criterions.data.forEach(
-              (criterion) => {
+    onResponse({ response }) {
+      const lotInfo = response._data.data.relationships.lots.data;
+      lotInfo.forEach((lot) => {
+        useFetch(
+          () => `https://backend-ten-swart.vercel.app/api/lot/${lot.id}`,
+          {
+            onResponse({ response }) {
+              const data = response._data.data;
+              lots.value.push(data.attributes);
+              data.relationships.criterions.data.forEach((criterion) => {
                 useFetch(
                   () =>
                     `https://backend-ten-swart.vercel.app/api/criterion/${criterion.id}`,
                   {
                     onResponse({ response }) {
-                      criterions.value.push(response._data.data.attributes);
+                      criterions.value = [response._data.data.attributes];
                     },
                   }
                 );
-              }
-            );
-          },
-        }
-      );
-      lot.value = info.value;
+              });
+            },
+          }
+        );
+      });
     },
   }
 );
