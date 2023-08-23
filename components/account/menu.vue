@@ -28,6 +28,7 @@ export default defineComponent({
       items: {
         account: "Account",
         "account/tenders": "My tenders",
+        "account/offers": "My offers",
       },
       router: useRoute(),
     };
@@ -36,7 +37,7 @@ export default defineComponent({
   methods: {
     logout() {
       if (process.client) {
-        localStorage.setItem("token", null);
+        localStorage.removeIten("userInfo");
       }
     },
   },

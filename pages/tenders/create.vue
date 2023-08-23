@@ -175,6 +175,7 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import EInput from "@/components/form/EInput.vue";
 import EText from "@/components/form/EText.vue";
 import ESelect from "@/components/form/ESelect.vue";
+import { useUserStore } from "@/stores/user";
 
 export default defineComponent({
   name: "CreatePage",
@@ -186,6 +187,7 @@ export default defineComponent({
   },
   data: () => {
     return {
+      userStore: useUserStore(),
       numberStep: 0,
       maxStep: 4,
       isNumOfSectionDisabled: false,
@@ -324,11 +326,13 @@ export default defineComponent({
       if (this.isStepValid || idx < this.numberStep) this.numberStep = idx;
     },
     async _sendRequest(url, data) {
+      const token = this.userStore.user.token;
       return await useFetch(() => url, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -340,7 +344,7 @@ export default defineComponent({
         `${url}/api/tender/create`,
         {
           data: {
-            ownerId: 1,
+            ownerId: this.userStore.user.id,
             organizationId: 1,
             title: this.title,
             startAt: this.period[0].toISOString(),
@@ -354,7 +358,7 @@ export default defineComponent({
         `${url}/api/criterion/create`,
         {
           data: {
-            ownerId: 1,
+            ownerId: this.userStore.user.id,
             organizationId: 1,
             name: criterionInfo.name,
             title: criterionInfo.title,
@@ -364,16 +368,18 @@ export default defineComponent({
         }
       );
 
+      const token = this.userStore.user.token;
       this.lots.forEach((lot) => {
         useFetch(() => `${url}/api/lot/create`, {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             data: {
-              ownerId: 1,
+              ownerId: this.userStore.user.id,
               organizationId: 1,
               title: lot.title,
               description: lot.description,
@@ -395,54 +401,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.steps-menu {
-  ul {
-    margin: 0;
-    list-style-type: none;
-
-    li {
-      padding: 10px;
-      padding-left: 20px;
-      margin: 0;
-      transition: all 0.3s;
-
-      .disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-      }
-
-      &.is-active {
-        background: #f7b452;
-
-        a {
-          color: #fff;
-        }
-      }
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      &:hover {
-        background: #f7b452;
-
-        a {
-          color: #fff;
-        }
-      }
-
-      a {
-        color: #273038;
-        font-size: 18px;
-      }
-    }
-  }
-
-  .buttons {
-    margin-top: 20px;
-  }
-}
-
 .menu-container {
   padding: 0;
 }

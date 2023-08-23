@@ -15,7 +15,10 @@
               field-type="password"
             />
           </div>
-          <button class="button" @click="signin">Submit</button>
+          <button class="button" @click="signin">
+            Login
+            <div v-if="isLoading" class="loader is-loading"></div>
+          </button>
         </div>
       </div>
     </div>
@@ -31,6 +34,7 @@
 <script lang="ts">
 import EInput from "@/components/form/EInput.vue";
 import { useUserStore } from "@/stores/user";
+import { getUserByExternalId } from "@/utils/common";
 
 definePageMeta({
   layout: "empty",
@@ -43,9 +47,10 @@ export default defineComponent({
     return {
       isShowSignInModal: false,
       email: "nikita@etrusty.io",
-      password: "string",
+      password: "niktest1",
       isShowNotification: false,
       notificationText: "",
+      isLoading: false,
     };
   },
   computed: {},
@@ -61,8 +66,9 @@ export default defineComponent({
         return;
       }
 
+      this.isLoading = true;
       const baseURL = this.$config.public.baseURL;
-      const authReq = await fetch(`${baseURL}/api/v1/users/signin`, {
+      const authReq = await fetch(`${baseURL}/api/auth/logIn`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -74,6 +80,7 @@ export default defineComponent({
         }),
       });
 
+      this.isLoading = false;
       if (authReq.status !== 200) {
         this.isShowNotification = true;
         this.notificationText = "Authentication error: Wrong email or password";
@@ -83,7 +90,9 @@ export default defineComponent({
 
       const data = await authReq.json();
       const store = useUserStore();
-      store.setToken(data.data);
+      const token = data.meta.session.access_token;
+      const userId = await getUserByExternalId(data.data.id, token);
+      store.saveUserInfo(userId, data.data.email, token);
       navigateTo("/account");
     },
   },
@@ -152,6 +161,10 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 
     &:hover {
       background: #273038;
+    }
+
+    .loader {
+      margin-left: 10px;
     }
   }
 

@@ -9,7 +9,7 @@
             </nuxt-link>
           </div>
         </div>
-        <div class="column is-7 is-vcentered">
+        <div class="column is-6 is-vcentered">
           <ul class="main-menu">
             <li>
               <nuxt-link active-class="active" :to="{ path: '/tenders' }"
@@ -23,7 +23,7 @@
             </li> -->
           </ul>
         </div>
-        <div class="column is-3 is-vcentered">
+        <div class="column is-4 is-vcentered">
           <div class="buttons is-right tool-buttons">
             <nuxt-link class="button is-link" :to="{ path: '/tenders/create' }">
               <span class="icon">
@@ -49,7 +49,7 @@
               <span class="icon">
                 <i class="fa fa-user"></i>
               </span>
-              <span>{{ store.user.firstName }} {{ store.user.lastName }}</span>
+              <span>{{ store.user.email }}</span>
             </nuxt-link>
           </div>
         </div>

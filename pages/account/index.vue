@@ -4,9 +4,6 @@
       <AccountMenu />
       <div class="column is-8 box">
         <h3 class="title is-4">Account</h3>
-        <div class="user-info">
-          <b>Name:</b> {{ store.user.lastName }} {{ store.user.firstName }}
-        </div>
         <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
       </div>
     </div>

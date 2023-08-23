@@ -38,7 +38,7 @@ const token = store.token;
 const query = JSON.stringify({
   where: {
     ownerId: {
-      equals: 1,
+      equals: store.user.id,
     },
   },
 });

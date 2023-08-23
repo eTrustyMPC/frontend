@@ -1,7 +1,4 @@
 export default defineNuxtConfig({
-  app: {
-    baseURL: "/tenders/",
-  },
   css: [{ src: "~/assets/scss/main.scss", lang: "scss" }],
   typescript: {
     typeCheck: {
