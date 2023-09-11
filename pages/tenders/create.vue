@@ -343,6 +343,8 @@ export default defineComponent({
             ownerId: 1,
             organizationId: 1,
             title: this.title,
+            startAt: this.period[0].toISOString(),
+            finishAt: this.period[1].toISOString(),
           },
         }
       );
@@ -356,8 +358,6 @@ export default defineComponent({
             organizationId: 1,
             name: criterionInfo.name,
             title: criterionInfo.title,
-            startAt: this.period[0].toISOString(),
-            finishAt: this.period[1].toISOString(),
             // scoreType: criterion.type,
             // agregationType: criterion.aggType,
           },
