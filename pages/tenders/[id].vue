@@ -86,7 +86,7 @@
                 </span>
                 <span>{{ criterion.title }}</span>
               </div>
-              <div class="tender-info-option description">
+              <!--               <div class="tender-info-option description">
                 <span class="icon">
                   <i class="fa fa-star"></i>
                 </span>
@@ -97,7 +97,7 @@
                   <i class="fa fa-code-compare"></i>
                 </span>
                 <span>{{ criterion.agregationType.toLowerCase() }}</span>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -108,8 +108,8 @@
 
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
-
 const route = useRoute();
+const config = useRuntimeConfig();
 await nextTick();
 
 const tenderId = route.params.id;
@@ -122,35 +122,33 @@ const menuItems = [
   "Lot criterion",
   // "Transactions",
 ];
+const apiUrl = config.public.baseURL;
+const tenderIdQuery = JSON.stringify({ where: { id: Number(tenderId) } });
 
 const { data: tender, pending } = useFetch(
-  () => `https://backend-ten-swart.vercel.app/api/tender/${tenderId}`,
+  () => `${apiUrl}/api/tender/findFirst?q=${tenderIdQuery}`,
   {
     default: () => {},
-    transform: (result) => result.data.attributes,
-    onResponse({ response }) {
-      const lotInfo = response._data.data.relationships.lots.data;
-      lotInfo.forEach((lot) => {
-        useFetch(
-          () => `https://backend-ten-swart.vercel.app/api/lot/${lot.id}`,
-          {
-            onResponse({ response }) {
-              const data = response._data.data;
-              lots.value.push(data.attributes);
-              data.relationships.criterions.data.forEach((criterion) => {
-                useFetch(
-                  () =>
-                    `https://backend-ten-swart.vercel.app/api/criterion/${criterion.id}`,
-                  {
-                    onResponse({ response }) {
-                      criterions.value = [response._data.data.attributes];
-                    },
-                  }
-                );
-              });
-            },
-          }
-        );
+    transform: (result) => result.data,
+    onResponse() {
+      const lotQuery = JSON.stringify({
+        where: { tenderId: Number(tenderId) },
+      });
+      useFetch(() => `${apiUrl}/api/lot/findMany?q=${lotQuery}`, {
+        onResponse({ response }) {
+          lots.value = response._data.data;
+          const criterionQuery = JSON.stringify({
+            where: { id: Number(response._data.data[0].id) },
+          });
+          useFetch(
+            () => `${apiUrl}/api/criterion/findFirst?q=${criterionQuery}`,
+            {
+              onResponse({ response }) {
+                criterions.value = [response._data.data];
+              },
+            }
+          );
+        },
       });
     },
   }

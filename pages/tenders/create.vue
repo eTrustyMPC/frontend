@@ -188,24 +188,24 @@ export default defineComponent({
     return {
       numberStep: 0,
       maxStep: 4,
-      title: "",
-      // title: "Test t 1",
       isNumOfSectionDisabled: false,
       isTypeProcedureDisabled: false,
       isJointProcurement: true,
       disabledItems: [1, 2, 3, 4],
       isPending: false,
       isCreated: false,
-      // lots: [
-      //   {
-      //     title: "Lot 1",
-      //     description: "Desc 1",
-      //   },
-      //   {
-      //     title: "Lot 2",
-      //     description: "Desc 2",
-      //   },
-      // ],
+      stepNames: [
+        "Tender information",
+        "Tender lot information",
+        "Lot criterion",
+        "Submission dates",
+        "Contacts",
+      ],
+      emailRegex:
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+
+      // Form fields
+      title: "",
       lots: [
         {
           title: "",
@@ -220,6 +220,22 @@ export default defineComponent({
           aggType: "AVG",
         },
       ],
+
+      period: null,
+      juryEmails: [{ email: "" }],
+      deadlineDate: null,
+      // Test data
+      // title: "Test t 1",
+      // lots: [
+      //   {
+      //     title: "Lot 1",
+      //     description: "Desc 1",
+      //   },
+      //   {
+      //     title: "Lot 2",
+      //     description: "Desc 2",
+      //   },
+      // ],
       // criterions: [
       //   {
       //     title: "Criterion title 1",
@@ -228,21 +244,9 @@ export default defineComponent({
       //     aggType: "AVG",
       //   },
       // ],
-      period: null,
       // period: [new Date(), new Date()],
-      juryEmails: [{ email: "" }],
       // juryEmails: [{ email: "nikita@etrusty.io" }],
-      stepNames: [
-        "Tender information",
-        "Tender lot information",
-        "Lot criterion",
-        "Submission dates",
-        "Contacts",
-      ],
-      deadlineDate: null,
       // deadlineDate: new Date(),
-      emailRegex:
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     };
   },
   computed: {
@@ -332,28 +336,36 @@ export default defineComponent({
     async create() {
       this.isPending = true;
       const url = this.$config.public.baseURL;
-      const date = new Date();
-      const isoDate = date.toISOString();
-      const { data: tender } = await this._sendRequest(`${url}/api/tender`, {
-        data: {
-          type: "string",
-          attributes: {
-            isDeleted: true,
-            isPublic: true,
-            createdAt: isoDate,
-            updatedAt: isoDate,
-            ownerId: "bryan@prisma.io",
-            organizationId: "prisma",
+      const { data: tender } = await this._sendRequest(
+        `${url}/api/tender/create`,
+        {
+          data: {
+            ownerId: 1,
+            organizationId: 1,
             title: this.title,
-            status: "DRAFT",
           },
-        },
-      });
+        }
+      );
       const tenderId = tender.value.data.id;
-      const criterions = this.criterions;
-      const request = this._sendRequest;
+      const criterionInfo = this.criterions[0];
+      const { data: criterion } = await this._sendRequest(
+        `${url}/api/criterion/create`,
+        {
+          data: {
+            ownerId: 1,
+            organizationId: 1,
+            name: criterionInfo.name,
+            title: criterionInfo.title,
+            startAt: this.period[0],
+            finishAt: this.period[1],
+            // scoreType: criterion.type,
+            // agregationType: criterion.aggType,
+          },
+        }
+      );
+
       this.lots.forEach((lot) => {
-        useFetch(() => `${url}/api/lot`, {
+        useFetch(() => `${url}/api/lot/create`, {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -361,43 +373,14 @@ export default defineComponent({
           },
           body: JSON.stringify({
             data: {
-              type: "string",
-              attributes: {
-                isDeleted: true,
-                isPublic: true,
-                createdAt: isoDate,
-                updatedAt: isoDate,
-                ownerId: "bryan@prisma.io",
-                organizationId: "prisma",
-                title: lot.title,
-                description: lot.description,
-                status: "DRAFT",
-                tenderId,
-              },
+              ownerId: 1,
+              organizationId: 1,
+              title: lot.title,
+              description: lot.description,
+              criterionId: criterion.value.data.id,
+              tenderId,
             },
           }),
-          onResponse({ response }) {
-            criterions.forEach(async (criterion) => {
-              await request(`${url}/api/criterion`, {
-                data: {
-                  type: "string",
-                  attributes: {
-                    isDeleted: true,
-                    isPublic: true,
-                    createdAt: isoDate,
-                    updatedAt: isoDate,
-                    ownerId: "bryan@prisma.io",
-                    organizationId: "prisma",
-                    name: criterion.name,
-                    title: criterion.title,
-                    scoreType: criterion.type,
-                    agregationType: criterion.aggType,
-                    lotId: response._data.data.id,
-                  },
-                },
-              });
-            });
-          },
         });
       });
       this.isPending = false;

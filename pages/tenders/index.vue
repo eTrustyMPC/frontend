@@ -52,20 +52,20 @@
             :to="{ path: `/tenders/${tender.id}` }"
           >
             <div style="display: flex; justify-content: space-between">
-              <h4 class="title is-4">{{ tender.attributes.title }}</h4>
+              <h4 class="title is-4">{{ tender.title }}</h4>
               <div class="status-container">
-                <span class="status-text">{{ tender.attributes.status }}</span>
+                <span class="status-text">{{ tender.status }}</span>
                 <div
-                  :class="[
-                    'status-icon',
-                    getStatusColorClass(tender.attributes.status),
-                  ]"
+                  :class="['status-icon', getStatusColorClass(tender.status)]"
                 ></div>
               </div>
             </div>
-            <b>Organization: {{ tender.attributes.organizationId }}</b>
+            <b>Organization: {{ tender.organizationId }}</b>
           </nuxt-link>
-          <div v-if="hasNextPage && !isLoading" class="buttons is-centered">
+          <div
+            v-if="tenders && maxCountTenders != tenders.length && !isLoading"
+            class="buttons is-centered"
+          >
             <button class="button add-more-tenders" @click="loadTenders">
               View more
             </button>
@@ -85,10 +85,10 @@ import ERadio from "@/components/form/ERadio.vue";
 
 await nextTick();
 
-const tendersURL = "https://backend-ten-swart.vercel.app/api/tender";
+const tendersURL = "https://etrusty.mywire.org/api/tender/findMany";
 const pageLimit = 3;
 let pageOffset = 0;
-const hasNextPage = ref(null);
+const maxCountTenders = ref(0);
 const route = useRoute();
 const router = useRouter();
 const tenderType = ref(route.query.type ? route.query.type : null);
@@ -97,16 +97,25 @@ const isLoading = ref(true);
 
 function getTenders() {
   const url = new URL(tendersURL);
-  if (tenderType.value)
-    url.searchParams.append("filter[status]", tenderType.value);
-  url.searchParams.append("page[limit]", pageLimit);
-  url.searchParams.append("page[offset]", pageOffset);
-  useFetch(() => url.href, {
+  const whereQuery = {};
+  const queryData = {
+    take: pageLimit,
+    skip: pageOffset,
+  };
+  if (tenderType.value) whereQuery.where = { status: tenderType.value };
+  const query = JSON.stringify({ ...queryData, ...whereQuery });
+  const queryForCount = JSON.stringify(whereQuery);
+  const countUrl = url.href.replace("findMany", "count");
+  useFetch(() => `${url.href}?q=${query}`, {
     default: () => [],
     onResponse({ response }) {
       isLoading.value = false;
-      hasNextPage.value = !!response._data.links.next;
       tenders.value = [...tenders.value, ...response._data.data];
+      useFetch(() => `${countUrl}?q=${queryForCount}`, {
+        onResponse({ response }) {
+          maxCountTenders.value = response._data.data;
+        },
+      });
     },
   });
 }
