@@ -12,14 +12,10 @@
             v-for="tender in tenders"
             :key="tender"
             class="box"
-            :to="{ path: `/tenders/${tender.Id}` }"
+            :to="{ path: `/tenders/${tender.id}` }"
           >
             <h4 class="title is-4">{{ tender.title }}</h4>
-            <b>Criteria</b>
-            <br />
-            <div v-for="criterion in tender.award_criterions" :key="criterion">
-              {{ criterion.title }}
-            </div>
+            <b>Organization: {{ tender.organizationId }}</b>
           </nuxt-link>
         </div>
       </div>
@@ -32,20 +28,31 @@ import { nextTick } from "vue";
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
 
+const config = useRuntimeConfig();
+
 await nextTick();
 
 const store = useUserStore();
-const config = useRuntimeConfig();
 const baseURL = config.public.baseURL;
 const token = store.token;
-
-const { data: tenders, pending } = useFetch(() => `${baseURL}/api/v1/tenders`, {
-  headers: {
-    Authorization: `Bearer ${token}`,
+const query = JSON.stringify({
+  where: {
+    ownerId: {
+      equals: 1,
+    },
   },
-  default: () => [],
-  transform: (result) => result.data,
 });
+
+const { data: tenders, pending } = useFetch(
+  () => `${baseURL}/api/tender/findMany?q=${query}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    default: () => [],
+    transform: (result) => result.data,
+  }
+);
 </script>
 
 <style lang="scss">

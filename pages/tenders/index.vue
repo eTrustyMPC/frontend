@@ -83,9 +83,12 @@
 import { nextTick, ref } from "vue";
 import ERadio from "@/components/form/ERadio.vue";
 
+const config = useRuntimeConfig();
+
 await nextTick();
 
-const tendersURL = "https://etrusty.mywire.org/api/tender/findMany";
+const apiUrl = config.public.baseURL;
+const tendersURL = `${apiUrl}/api/tender/findMany`;
 const pageLimit = 3;
 let pageOffset = 0;
 const maxCountTenders = ref(0);
