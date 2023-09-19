@@ -48,13 +48,35 @@
               <span class="icon">
                 <i class="fa fa-envelope"></i>
               </span>
-              <span>{{ tender.ownerId }}</span>
+              <span>{{ user.name }}: {{ user.email }}</span>
             </div>
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-building"></i>
               </span>
-              <span>{{ tender.organizationId }}</span>
+              <span>{{ organization.name }}</span>
+            </div>
+            <div class="tender-info-option transaction">
+              <span class="icon">
+                <i class="fa fa-lock"></i>
+              </span>
+              <span>{{ subHash(tender.syncTxId) }}</span>
+              <a href="#" @click="copyHash(tender.syncTxId)">
+                <span class="icon">
+                  <i class="fa fa-copy"></i>
+                </span>
+              </a>
+              <a
+                :href="
+                  'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                  tender.syncTxId
+                "
+                target="_blank"
+              >
+                <span class="icon">
+                  <i class="fa fa-link"></i>
+                </span>
+              </a>
             </div>
           </div>
           <div v-if="activeItem == 1 && lots" class="tender-info-section">
@@ -103,15 +125,23 @@
         </div>
       </div>
     </div>
+    <div :class="['notification ', isNotification ? 'is-active' : '']">
+      <button class="delete" @click="isNotification = false"></button>
+      {{ notificationText }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
+import { subHash } from "@/utils/common";
+
 const route = useRoute();
 const config = useRuntimeConfig();
 await nextTick();
 
+const isNotification = ref(false);
+const notificationText = ref("");
 const tenderId = route.params.id;
 const activeItem = ref(0);
 const lots = ref([]);
@@ -124,13 +154,35 @@ const menuItems = [
 ];
 const apiUrl = config.public.baseURL;
 const tenderIdQuery = JSON.stringify({ where: { id: Number(tenderId) } });
+const organization = ref({});
+const user = ref({});
 
 const { data: tender, pending } = useFetch(
   () => `${apiUrl}/api/tender/findFirst?q=${tenderIdQuery}`,
   {
     default: () => {},
     transform: (result) => result.data,
-    onResponse() {
+    onResponse({ response }) {
+      const organizationIdQuery = JSON.stringify({
+        where: { id: Number(response._data.data.organizationId) },
+      });
+      useFetch(
+        () => `${apiUrl}/api/organization/findFirst?q=${organizationIdQuery}`,
+        {
+          onResponse({ response }) {
+            organization.value = response._data.data;
+          },
+        }
+      );
+
+      const userIdQuery = JSON.stringify({
+        where: { id: Number(response._data.data.ownerId) },
+      });
+      useFetch(() => `${apiUrl}/api/user/findFirst?q=${userIdQuery}`, {
+        onResponse({ response }) {
+          user.value = response._data.data;
+        },
+      });
       const lotQuery = JSON.stringify({
         where: { tenderId: Number(tenderId) },
       });
@@ -156,6 +208,13 @@ const { data: tender, pending } = useFetch(
 
 function choseMenuItem(idx) {
   activeItem.value = idx;
+}
+
+function copyHash(hash) {
+  navigator.clipboard.writeText(hash);
+  isNotification.value = true;
+  notificationText.value = `Copied to clipboard: ${hash}`;
+  setTimeout(() => (isNotification.value = false), 3000);
 }
 </script>
 
@@ -187,5 +246,11 @@ function choseMenuItem(idx) {
 
 .criterion-item {
   margin-bottom: 30px;
+}
+
+.transaction {
+  span {
+    margin-right: 10px;
+  }
 }
 </style>

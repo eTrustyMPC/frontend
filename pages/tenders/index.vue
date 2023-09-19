@@ -60,7 +60,7 @@
                 ></div>
               </div>
             </div>
-            <b>Organization: {{ tender.organizationId }}</b>
+            <b>Transaction: {{ subHash(tender.syncTxId) }}</b>
           </nuxt-link>
           <div
             v-if="tenders && maxCountTenders != tenders.length && !isLoading"
@@ -82,6 +82,7 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 import ERadio from "@/components/form/ERadio.vue";
+import { subHash } from "@/utils/common";
 
 const config = useRuntimeConfig();
 
