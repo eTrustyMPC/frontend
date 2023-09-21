@@ -50,6 +50,10 @@ button {
   &.box {
     padding: 0;
   }
+
+  .box {
+    padding: 0;
+  }
 }
 
 .button {
@@ -243,5 +247,79 @@ button {
 
   .dp__action_cancel:hover {
     border-color: #f7b452;
+  }
+}
+
+.steps-menu {
+  ul {
+    margin: 0;
+    list-style-type: none;
+
+    li {
+      padding: 10px;
+      padding-left: 20px;
+      margin: 0;
+      transition: all 0.3s;
+
+      .disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      &.is-active {
+        background: #f7b452;
+
+        a {
+          color: #fff;
+        }
+      }
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        background: #f7b452;
+
+        a {
+          color: #fff;
+        }
+      }
+
+      a {
+        color: #273038;
+        font-size: 18px;
+      }
+    }
+  }
+
+  .buttons {
+    margin-top: 20px;
+  }
+}
+
+.modal-buttons {
+  button {
+    &.apply[disabled] {
+      background: #e5c076;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+
+    .loader {
+      margin-left: 10px;
+    }
+
+    background: #e5c076;
+    color: #fff;
+    border: 1px solid #e5c076;
+    transition: 0.3s all;
+
+    &:hover {
+      background: #fff;
+      color: #273038;
+    }
   }
 }

@@ -81,10 +81,12 @@
 
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
+import { useUserStore } from "@/stores/user";
 import ERadio from "@/components/form/ERadio.vue";
 import { subHash } from "@/utils/common";
 
 const config = useRuntimeConfig();
+const store = useUserStore();
 
 await nextTick();
 
@@ -112,10 +114,16 @@ function getTenders() {
   const countUrl = url.href.replace("findMany", "count");
   useFetch(() => `${url.href}?q=${query}`, {
     default: () => [],
+    headers: {
+      Authorization: `Bearer ${store.token}`,
+    },
     onResponse({ response }) {
       isLoading.value = false;
       tenders.value = [...tenders.value, ...response._data.data];
       useFetch(() => `${countUrl}?q=${queryForCount}`, {
+        headers: {
+          Authorization: `Bearer ${store.token}`,
+        },
         onResponse({ response }) {
           maxCountTenders.value = response._data.data;
         },

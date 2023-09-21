@@ -3,27 +3,28 @@ import { defineStore } from "pinia";
 export const useUserStore = defineStore("user", {
   state: () => ({
     isAuth: false,
-    token: "",
-    userInfo: {},
+    token: null,
+    id: null,
+    email: null,
   }),
 
   getters: {
-    user: (state) => state.userInfo,
+    user: (state) => {
+      return { id: state.id, email: state.email, token: state.token };
+    },
   },
 
   actions: {
-    updateInfo(user, token) {
-      this.userInfo = {
-        id: user.id,
-        firstName: user.first_name,
-        lastName: user.last_name,
-        email: user.email,
-      };
-      this.isAuth = true;
-    },
-    setToken(token) {
+    saveUserInfo(id, email, token) {
+      this.id = id;
+      this.email = email;
       this.token = token;
-      if (process.client) localStorage.setItem("token", token);
+      this.isAuth = true;
+      if (process.client)
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({ id: id, email: email, token: token })
+        );
     },
   },
 });
