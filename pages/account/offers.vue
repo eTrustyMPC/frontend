@@ -4,16 +4,10 @@
       <AccountMenu />
       <div class="column is-8 box">
         <h3 class="title is-4">Offers</h3>
-        <div
-          v-if="pending && Object.keys(offerTenderMap).length == 0"
-          class="loader-wrapper is-active"
-        >
+        <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
-        <div
-          v-if="!pending && Object.keys(offerTenderMap).length != 0"
-          class="offers-list"
-        >
+        <div v-if="!pending" class="offers-list">
           <div v-for="offer in offers" :key="offer" class="box">
             <div class="offer-info">
               <b>Description: </b> {{ offer.description }}

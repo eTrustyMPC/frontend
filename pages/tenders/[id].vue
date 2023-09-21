@@ -136,7 +136,12 @@
       <button class="delete" @click="isNotification = false"></button>
       {{ notificationText }}
     </div>
-    <div v-if="isShowOfferModal" class="modal is-active">
+    <div :class="['notification ', isShowNotification ? 'is-active' : '']">
+      <button class="delete" @click="isShowNotification = false"></button>
+      The offer has been successfully created!
+      <nuxt-link :to="{ path: '/account/offers' }">My offers</nuxt-link>
+    </div>
+    <div v-if="isShowOfferModal" class="offer-modal modal is-active">
       <div class="modal-background" @click="isShowOfferModal = false"></div>
       <div class="modal-content">
         <div class="box">
@@ -212,6 +217,7 @@ const tenderIdQuery = JSON.stringify({ where: { id: Number(tenderId) } });
 const organization = ref({});
 const user = ref({});
 const isLoading = ref(false);
+const isShowNotification = ref(false);
 
 const { data: tender, pending } = useFetch(
   () => `${apiUrl}/api/tender/findFirst?q=${tenderIdQuery}`,
@@ -297,6 +303,8 @@ function createOffer() {
       },
     }),
     onResponse() {
+      isShowNotification.value = true;
+      isShowOfferModal.value = false;
       isLoading.value = false;
     },
   });
@@ -362,6 +370,12 @@ function copyHash(hash) {
       background: #fff;
       color: #273038;
     }
+  }
+}
+
+.offer-modal {
+  .select-field {
+    margin-bottom: 15px;
   }
 }
 </style>

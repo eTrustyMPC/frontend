@@ -8,12 +8,22 @@
           <h4 class="title is-4 has-text-centered">Sign In</h4>
           <EInput v-model:value="email" label="E-mail" name="email" />
           <div class="password">
-            <EInput
-              v-model:value="password"
-              label="Password"
-              name="password"
-              field-type="password"
-            />
+            <div class="input-field field">
+              <label class="label">Password</label>
+              <div class="control">
+                <input
+                  v-model="password"
+                  class="input"
+                  name="password"
+                  :type="isShowPassword ? 'text' : 'password'"
+                />
+                <span class="icon" @click="isShowPassword = !isShowPassword">
+                  <i
+                    :class="['fa', isShowPassword ? 'fa-eye' : 'fa-eye-slash']"
+                  ></i>
+                </span>
+              </div>
+            </div>
           </div>
           <button class="button" @click="signin">
             Login
@@ -22,9 +32,7 @@
         </div>
       </div>
     </div>
-    <div
-      :class="['notification is-info', isShowNotification ? 'is-active' : '']"
-    >
+    <div :class="['notification', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
       {{ notificationText }}
     </div>
@@ -51,6 +59,7 @@ export default defineComponent({
       isShowNotification: false,
       notificationText: "",
       isLoading: false,
+      isShowPassword: false,
     };
   },
   computed: {},
@@ -131,6 +140,19 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 
   .password {
     margin-bottom: 10px;
+
+    .control {
+      position: relative;
+
+      span {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 5px;
+        margin: auto;
+        cursor: pointer;
+      }
+    }
   }
 
   .input-field,
