@@ -29,6 +29,7 @@ export default defineComponent({
         account: "Account",
         "account/tenders": "My tenders",
         "account/offers": "My offers",
+        "account/estimation/tenders": "Estimation",
       },
       router: useRoute(),
     };
@@ -37,7 +38,7 @@ export default defineComponent({
   methods: {
     logout() {
       if (process.client) {
-        localStorage.removeIten("userInfo");
+        localStorage.removeItem("userInfo");
       }
     },
   },

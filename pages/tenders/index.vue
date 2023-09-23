@@ -118,7 +118,6 @@ function getTenders() {
       Authorization: `Bearer ${store.token}`,
     },
     onResponse({ response }) {
-      isLoading.value = false;
       tenders.value = [...tenders.value, ...response._data.data];
       useFetch(() => `${countUrl}?q=${queryForCount}`, {
         headers: {
@@ -126,6 +125,7 @@ function getTenders() {
         },
         onResponse({ response }) {
           maxCountTenders.value = response._data.data;
+          isLoading.value = false;
         },
       });
     },

@@ -42,7 +42,6 @@
 <script lang="ts">
 import EInput from "@/components/form/EInput.vue";
 import { useUserStore } from "@/stores/user";
-import { getUserByExternalId } from "@/utils/common";
 
 definePageMeta({
   layout: "empty",
@@ -100,8 +99,7 @@ export default defineComponent({
       const data = await authReq.json();
       const store = useUserStore();
       const token = data.meta.session.access_token;
-      const userId = await getUserByExternalId(data.data.id, token);
-      store.saveUserInfo(userId, data.data.email, token);
+      store.saveUserInfo(data.data.id, data.data.email, token, data.data.role);
       navigateTo("/account");
     },
   },

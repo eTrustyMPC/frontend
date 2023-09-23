@@ -243,7 +243,7 @@ export default defineComponent({
       //     title: "Criterion title 1",
       //     name: "Criterion name 1",
       //     type: "NUMBER",
-      //     aggType: "AVG",
+      //     aggType: "MIN",
       //   },
       // ],
       // period: [new Date(), new Date()],
@@ -345,10 +345,10 @@ export default defineComponent({
         {
           data: {
             ownerId: this.userStore.user.id,
-            organizationId: 1,
             title: this.title,
             startAt: this.period[0].toISOString(),
             finishAt: this.period[1].toISOString(),
+            jury_emails: this.juryEmails.map((e) => e.email),
           },
         }
       );
@@ -359,7 +359,6 @@ export default defineComponent({
         {
           data: {
             ownerId: this.userStore.user.id,
-            organizationId: 1,
             name: criterionInfo.name,
             title: criterionInfo.title,
             // scoreType: criterion.type,
@@ -380,7 +379,6 @@ export default defineComponent({
           body: JSON.stringify({
             data: {
               ownerId: this.userStore.user.id,
-              organizationId: 1,
               title: lot.title,
               description: lot.description,
               criterionId: criterion.value.data.id,
