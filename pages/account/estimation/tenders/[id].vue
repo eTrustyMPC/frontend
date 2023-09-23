@@ -15,11 +15,6 @@
             </ul>
           </div>
         </div>
-        <div v-if="!pending && lots.length > 0" class="buttons">
-          <button class="button" @click="isShowOfferModal = true">
-            Participate
-          </button>
-        </div>
       </div>
       <div class="column is-8 box">
         <div v-if="pending" class="loader-wrapper is-active">
@@ -34,23 +29,6 @@
               </span>
               <span>{{ tender.status }}</span>
             </div>
-            <!-- <div class="tender-info-option description">
-              <span class="icon">
-                <i class="fa fa-comment"></i>
-              </span>
-              <span
-                >Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy text ever since the 1500s, when an unknown
-                printer took a galley of type and scrambled it to make a type
-                specimen book. It has survived not only five centuries, but also
-                the leap into electronic typesetting, remaining essentially
-                unchanged. It was popularised in the 1960s with the release of
-                Letraset sheets containing Lorem Ipsum passages, and more
-                recently with desktop publishing software like Aldus PageMaker
-                including versions of Lorem Ipsum.</span
-              >
-            </div> -->
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-envelope"></i>
@@ -109,53 +87,55 @@
                 </span>
                 <span>{{ criterion.title }}</span>
               </div>
-              <!--               <div class="tender-info-option description">
-                <span class="icon">
-                  <i class="fa fa-star"></i>
-                </span>
-                <span>{{ criterion.scoreType.toLowerCase() }}</span>
+            </div>
+          </div>
+          <div v-if="activeItem == 3" class="tender-info-section">
+            <div class="offers-list">
+              <div v-for="offer in offers" :key="offer" class="box">
+                <div class="offer-info">
+                  <b>Lot: </b>
+                  {{ lots.filter((l) => l.id == offer.lotId)[0].title }}
+                </div>
+                <div class="offer-info">
+                  <b>Offer description: </b> {{ offer.description }}
+                </div>
+                <div class="offer-info"><b>Cost: </b> {{ offer.cost }}</div>
+                <div v-if="recordedVotes.includes(offer.id)" class="offer-info">
+                  <b>Your vote has already been counted</b>
+                </div>
+                <button
+                  class="button estimation-button"
+                  :disabled="recordedVotes.includes(offer.id)"
+                  @click="showEstimationModal(offer)"
+                >
+                  Estimate
+                </button>
               </div>
-              <div class="tender-info-option description">
-                <span class="icon">
-                  <i class="fa fa-code-compare"></i>
-                </span>
-                <span>{{ criterion.agregationType.toLowerCase() }}</span>
-              </div> -->
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div :class="['notification ', isNotification ? 'is-active' : '']">
-      <button class="delete" @click="isNotification = false"></button>
-      {{ notificationText }}
-    </div>
     <div :class="['notification ', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
-      The offer has been successfully created!
-      <nuxt-link :to="{ path: '/account/offers' }">My offers</nuxt-link>
+      Your vote counts
     </div>
-    <div v-if="isShowOfferModal" class="offer-modal modal is-active">
-      <div class="modal-background" @click="isShowOfferModal = false"></div>
+    <div v-if="isShowModal" class="offer-modal modal is-active">
+      <div class="modal-background" @click="isShowModal = false"></div>
       <div class="modal-content">
         <div class="box">
-          <ESelect
-            v-model:value="offerLot"
-            label="Lot"
-            :selected="lots[0].id"
-            :values="
-              Object.assign({}, ...lots.map((v) => ({ [v.id]: v.title })))
-            "
+          <EInput
+            v-model:value="estimationValue"
+            label="Your estimate"
+            name="estimationValue"
           />
-          <EInput v-model:value="offerCost" label="Cost" name="cost" />
-          <EText v-model:value="offerDescription" label="Description" />
           <div class="buttons modal-buttons">
             <button
               class="button apply"
               :disabled="!isModalFormValid"
-              @click="createOffer"
+              @click="estimate"
             >
-              Apply
+              Submit estimation
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
           </div>
@@ -164,7 +144,7 @@
       <button
         class="modal-close is-large"
         aria-label="close"
-        @click="isShowOfferModal = false"
+        @click="isShowModal = false"
       ></button>
     </div>
   </div>
@@ -174,44 +154,42 @@
 import { nextTick, ref, computed } from "vue";
 import { subHash } from "@/utils/common";
 import { useUserStore } from "@/stores/user";
-import EText from "@/components/form/EText.vue";
 import EInput from "@/components/form/EInput.vue";
-import ESelect from "@/components/form/ESelect.vue";
 
 const route = useRoute();
 const config = useRuntimeConfig();
 const store = useUserStore();
 await nextTick();
 
-const isNotification = ref(false);
 const notificationText = ref("");
 const tenderId = route.params.id;
 const activeItem = ref(0);
 const lots = ref([]);
+const offers = ref([]);
 const criterions = ref([]);
-const isShowOfferModal = ref(false);
-const offerCost = ref("");
-const offerDescription = ref("");
-const offerLot = ref(null);
 const menuItems = [
   "Information",
   "Lot information",
   "Lot criterion",
+  "Offers",
   // "Transactions",
 ];
 
-const isModalFormValid = computed(() => {
-  const cost = parseInt(offerCost.value) || 0;
-  if (cost <= 0) return false;
-  if (offerDescription.value.length < 3) return false;
-  return true;
-});
 const apiUrl = config.public.baseURL;
 const tenderIdQuery = JSON.stringify({ where: { id: Number(tenderId) } });
 const organization = ref({});
 const user = ref({});
 const isLoading = ref(false);
 const isShowNotification = ref(false);
+const isShowModal = ref(false);
+const estimationValue = ref(null);
+const modalOffer = ref(null);
+const recordedVotes = ref([]);
+
+const isModalFormValid = computed(() => {
+  const value = parseInt(estimationValue.value) || 0;
+  return value > 0;
+});
 
 const { data: tender, pending } = useFetch(
   () => `${apiUrl}/api/tender/findFirst?q=${tenderIdQuery}`,
@@ -221,11 +199,11 @@ const { data: tender, pending } = useFetch(
       Authorization: `Bearer ${store.user.token}`,
     },
     transform: (result) => result.data,
-    onResponse({ response }) {
+    async onResponse({ response }) {
       const organizationIdQuery = JSON.stringify({
         where: { id: Number(response._data.data.organizationId) },
       });
-      useFetch(
+      await useFetch(
         () => `${apiUrl}/api/organization/findFirst?q=${organizationIdQuery}`,
         {
           headers: {
@@ -240,7 +218,7 @@ const { data: tender, pending } = useFetch(
       const userIdQuery = JSON.stringify({
         where: { id: Number(response._data.data.ownerId) },
       });
-      useFetch(() => `${apiUrl}/api/user/findFirst?q=${userIdQuery}`, {
+      await useFetch(() => `${apiUrl}/api/user/findFirst?q=${userIdQuery}`, {
         headers: {
           Authorization: `Bearer ${store.user.token}`,
         },
@@ -251,57 +229,61 @@ const { data: tender, pending } = useFetch(
       const lotQuery = JSON.stringify({
         where: { tenderId: Number(tenderId) },
       });
-      useFetch(() => `${apiUrl}/api/lot/findMany?q=${lotQuery}`, {
-        headers: {
-          Authorization: `Bearer ${store.user.token}`,
-        },
-        onResponse({ response }) {
-          lots.value = response._data.data;
-          const criterionQuery = JSON.stringify({
-            where: { id: Number(response._data.data[0].id) },
-          });
-          offerLot.value = lots.value[0].id;
-          useFetch(
-            () => `${apiUrl}/api/criterion/findFirst?q=${criterionQuery}`,
-            {
-              headers: {
-                Authorization: `Bearer ${store.user.token}`,
-              },
-              onResponse({ response }) {
-                criterions.value = [response._data.data];
-              },
-            }
-          );
-        },
+      const { data: lotsInfo } = await useFetch(
+        () => `${apiUrl}/api/lot/findMany?q=${lotQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.user.token}`,
+          },
+          transform: (result) => result.data,
+          onResponse({ response }) {
+            const criterionQuery = JSON.stringify({
+              where: { id: Number(response._data.data[0].id) },
+            });
+            useFetch(
+              () => `${apiUrl}/api/criterion/findFirst?q=${criterionQuery}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${store.user.token}`,
+                },
+                onResponse({ response }) {
+                  criterions.value = [response._data.data];
+                },
+              }
+            );
+          },
+        }
+      );
+      lots.value = lotsInfo.value;
+      const offerQuery = JSON.stringify({
+        where: { lotId: { in: lots.value.map((l) => l.id) } },
       });
+      const { data: offersInfo } = await useFetch(
+        () => `${apiUrl}/api/offer/findMany?q=${offerQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.user.token}`,
+          },
+          transform: (result) => result.data,
+        }
+      );
+      const scoreQuery = JSON.stringify({
+        where: { ownerId: store.user.id },
+      });
+      const { data: scoreInfo } = await useFetch(
+        () => `${apiUrl}/api/score/findMany?q=${scoreQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.user.token}`,
+          },
+          transform: (result) => result.data,
+        }
+      );
+      recordedVotes.value = scoreInfo.value.map((s) => s.offerId);
+      offers.value = offersInfo.value;
     },
   }
 );
-
-function createOffer() {
-  isLoading.value = true;
-  useFetch(() => `${apiUrl}/api/offer/create`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${store.user.token}`,
-    },
-    body: JSON.stringify({
-      data: {
-        ownerId: store.user.id,
-        lotId: offerLot.value,
-        cost: parseInt(offerCost.value),
-        description: offerDescription.value,
-      },
-    }),
-    onResponse() {
-      isShowNotification.value = true;
-      isShowOfferModal.value = false;
-      isLoading.value = false;
-    },
-  });
-}
 
 function choseMenuItem(idx) {
   activeItem.value = idx;
@@ -309,9 +291,41 @@ function choseMenuItem(idx) {
 
 function copyHash(hash) {
   navigator.clipboard.writeText(hash);
-  isNotification.value = true;
+  isShowNotification.value = true;
   notificationText.value = `Copied to clipboard: ${hash}`;
-  setTimeout(() => (isNotification.value = false), 3000);
+  setTimeout(() => (isShowNotification.value = false), 3000);
+}
+
+function showEstimationModal(offer) {
+  isShowModal.value = true;
+  modalOffer.value = offer;
+}
+
+async function estimate() {
+  isLoading.value = true;
+  await useFetch(() => `${apiUrl}/api/score/create`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${store.user.token}`,
+    },
+    transform: (result) => result.data,
+    body: JSON.stringify({
+      data: {
+        ownerId: store.user.id,
+        offerId: modalOffer.value.id,
+        value: parseInt(estimationValue.value),
+        criterionId: criterions.value[0].id,
+      },
+    }),
+  });
+  recordedVotes.value.push(modalOffer.value.id);
+  isShowNotification.value = true;
+  isLoading.value = false;
+  isShowModal.value = false;
+  modalOffer.value = null;
+  setTimeout(() => (isShowNotification.value = false), 5000);
 }
 </script>
 
@@ -369,6 +383,24 @@ function copyHash(hash) {
 .offer-modal {
   .select-field {
     margin-bottom: 15px;
+  }
+}
+
+.estimation-button {
+  margin-top: 10px;
+  background: #e5c076;
+  color: #fff;
+  border: 0;
+  transition: 0.3s all;
+  border: 1px solid #e5c076;
+
+  &:hover {
+    color: #e5c076;
+    background: #fff;
+  }
+
+  &:disabled {
+    color: #e5c076;
   }
 }
 </style>
