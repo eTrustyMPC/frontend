@@ -142,7 +142,6 @@
           <ESelect
             v-model:value="offerLot"
             label="Lot"
-            :selected="lots[0].id"
             :values="
               Object.assign({}, ...lots.map((v) => ({ [v.id]: v.title })))
             "
@@ -290,7 +289,7 @@ function createOffer() {
     body: JSON.stringify({
       data: {
         ownerId: store.user.id,
-        lotId: offerLot.value,
+        lotId: Number(offerLot.value),
         cost: parseInt(offerCost.value),
         description: offerDescription.value,
       },
