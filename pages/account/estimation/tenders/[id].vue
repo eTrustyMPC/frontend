@@ -29,6 +29,15 @@
               </span>
               <span>{{ tender.status }}</span>
             </div>
+            <div v-if="tender.startAt" class="tender-info-option">
+              <span class="icon">
+                <i class="fa fa-calendar"></i>
+              </span>
+              <span
+                >{{ moment(tender.startAt).format("YYYY-MM-DD HH:mm") }} -
+                {{ moment(tender.finishAt).format("YYYY-MM-DD HH:mm") }}</span
+              >
+            </div>
             <div class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-envelope"></i>

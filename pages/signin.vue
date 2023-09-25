@@ -99,7 +99,14 @@ export default defineComponent({
       const data = await authReq.json();
       const store = useUserStore();
       const token = data.meta.session.access_token;
-      store.saveUserInfo(data.data.id, data.data.email, token, data.data.role);
+      store.saveUserInfo(
+        data.data.id,
+        data.data.email,
+        token,
+        data.data.role,
+        data.data.syncTxId,
+        data.meta.session.user.created_at
+      );
       navigateTo("/account");
     },
   },

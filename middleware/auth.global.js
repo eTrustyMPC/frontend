@@ -15,7 +15,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       userInfo.id,
       userInfo.email,
       userInfo.token,
-      userInfo.role
+      userInfo.role,
+      userInfo.syncTxId,
+      userInfo.createdAt
     );
 
   // const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VyX2VtYWlsIjoibmlraXRhQGV0cnVzdHkuaW8iLCJleHAiOjE2OTA3OTUyODd9.Dulq3a6ewWq5YpZK9lKqaDu142_DH5lRGekUFypShII"

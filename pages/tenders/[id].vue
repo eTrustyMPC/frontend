@@ -34,6 +34,15 @@
               </span>
               <span>{{ tender.status }}</span>
             </div>
+            <div v-if="tender.startAt" class="tender-info-option">
+              <span class="icon">
+                <i class="fa fa-calendar"></i>
+              </span>
+              <span
+                >{{ moment(tender.startAt).format("YYYY-MM-DD HH:mm") }} -
+                {{ moment(tender.finishAt).format("YYYY-MM-DD HH:mm") }}</span
+              >
+            </div>
             <!-- <div class="tender-info-option description">
               <span class="icon">
                 <i class="fa fa-comment"></i>
@@ -171,6 +180,7 @@
 
 <script setup lang="ts">
 import { nextTick, ref, computed } from "vue";
+import moment from "moment";
 import { subHash } from "@/utils/common";
 import { useUserStore } from "@/stores/user";
 import EText from "@/components/form/EText.vue";

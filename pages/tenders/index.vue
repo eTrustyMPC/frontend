@@ -97,7 +97,7 @@ let pageOffset = 0;
 const maxCountTenders = ref(0);
 const route = useRoute();
 const router = useRouter();
-const tenderType = ref(route.query.type ? route.query.type : null);
+const tenderType = ref(route.query.type ? route.query.type : "ACTIVE");
 const tenders = ref([]);
 const isLoading = ref(true);
 
