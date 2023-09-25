@@ -258,7 +258,7 @@ const { data: tender, pending } = useFetch(
         onResponse({ response }) {
           lots.value = response._data.data;
           const criterionQuery = JSON.stringify({
-            where: { id: Number(response._data.data[0].id) },
+            where: { id: Number(response._data.data[0].criterionId) },
           });
           offerLot.value = lots.value[0].id;
           useFetch(

@@ -238,7 +238,7 @@ const { data: tender, pending } = useFetch(
           transform: (result) => result.data,
           onResponse({ response }) {
             const criterionQuery = JSON.stringify({
-              where: { id: Number(response._data.data[0].id) },
+              where: { id: Number(response._data.data[0].criterionId) },
             });
             useFetch(
               () => `${apiUrl}/api/criterion/findFirst?q=${criterionQuery}`,
