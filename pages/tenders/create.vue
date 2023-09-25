@@ -346,6 +346,7 @@ export default defineComponent({
           data: {
             ownerId: this.userStore.user.id,
             title: this.title,
+            status: "ACTIVE",
             startAt: this.period[0].toISOString(),
             finishAt: this.period[1].toISOString(),
             jury_emails: this.juryEmails.map((e) => e.email),
