@@ -36,4 +36,10 @@ export default defineNuxtConfig({
   build: {
     transpile: ["@vuepic/vue-datepicker"],
   },
+  supabase: {
+    redirectOptions: {
+      login: "/signin",
+      callback: "/confirm",
+    },
+  },
 });

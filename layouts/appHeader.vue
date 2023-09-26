@@ -9,7 +9,7 @@
             </nuxt-link>
           </div>
         </div>
-        <div class="column is-6 is-vcentered">
+        <div class="column is-3 is-vcentered">
           <ul class="main-menu">
             <li>
               <nuxt-link active-class="active" :to="{ path: '/tenders' }"
@@ -23,7 +23,7 @@
             </li> -->
           </ul>
         </div>
-        <div class="column is-4 is-vcentered">
+        <div class="column is-7 is-vcentered">
           <div class="buttons is-right tool-buttons">
             <nuxt-link
               v-if="store.user.role == 'tender_owner'"
