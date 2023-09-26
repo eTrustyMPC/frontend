@@ -15,7 +15,14 @@
             </ul>
           </div>
         </div>
-        <div v-if="!pending && lots.length > 0" class="buttons">
+        <div
+          v-if="
+            lots.length > 0 &&
+            store.user.role == 'applicant' &&
+            tender.ownerId !== store.user.id
+          "
+          class="buttons"
+        >
           <button class="button" @click="isShowOfferModal = true">
             Participate
           </button>

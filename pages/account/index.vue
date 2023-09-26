@@ -6,10 +6,10 @@
         <div v-if="store.user" class="account-wrapper">
           <h3 class="title is-4">Account</h3>
           <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
-          <div class="user-info">
+          <div v-if="store.user.createdAt" class="user-info">
             <b>Created at:</b> {{ store.user.createdAt }}
           </div>
-          <div class="user-info">
+          <div v-if="store.user.syncTxId" class="user-info">
             <b>Token address: </b>
             <a
               :href="

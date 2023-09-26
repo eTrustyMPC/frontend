@@ -16,8 +16,8 @@
             <div class="offer-info offer-tender-info">
               <b>Tender: </b>
               <nuxt-link
-                :to="{ path: `/tenders/${offerTenderMap[offer.id].id}` }"
-                >{{ offerTenderMap[offer.id].title }}</nuxt-link
+                :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
+                >{{ getTenderByOffer(offer).title }}</nuxt-link
               >
             </div>
             <a
@@ -48,7 +48,8 @@ await nextTick();
 const store = useUserStore();
 const baseURL = config.public.baseURL;
 const token = store.token;
-const offerTenderMap = ref({});
+const lotTenderMap = ref({});
+const tendersMap = ref({});
 const query = JSON.stringify({
   where: {
     ownerId: {
@@ -56,6 +57,10 @@ const query = JSON.stringify({
     },
   },
 });
+
+function getTenderByOffer(offer) {
+  return tendersMap.value[lotTenderMap.value[offer.lotId]];
+}
 
 const { data: offers, pending } = useFetch(
   () => `${baseURL}/api/offer/findMany?q=${query}`,
@@ -65,37 +70,36 @@ const { data: offers, pending } = useFetch(
     },
     default: () => [],
     transform: (result) => result.data,
-    onResponse({ response }) {
-      response._data.data.forEach(async (offer) => {
-        const lotQuery = JSON.stringify({
-          where: { id: offer.lotId },
-        });
-        const { data: lot } = await useFetch(
-          () => `${baseURL}/api/lot/findFirst?q=${lotQuery}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            transform: (result) => result.data,
-          }
-        );
-
-        const tenderQuery = JSON.stringify({
-          where: { id: lot.value.tenderId },
-        });
-        const { data: tender } = await useFetch(
-          () => `${baseURL}/api/tender/findFirst?q=${tenderQuery}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            transform: (result) => result.data,
-          }
-        );
-        offerTenderMap.value[offer.id] = {
-          id: tender.value.id,
-          title: tender.value.title,
-        };
+    async onResponse({ response }) {
+      const lotQuery = JSON.stringify({
+        where: { id: { in: response._data.data.map((o) => o.lotId) } },
+      });
+      const { data: lots } = await useFetch(
+        () => `${baseURL}/api/lot/findMany?q=${lotQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          transform: (result) => result.data,
+        }
+      );
+      lots.value.forEach((lot) => {
+        lotTenderMap.value[lot.id] = lot.tenderId;
+      });
+      const tenderQuery = JSON.stringify({
+        where: { id: { in: lots.value.map((l) => l.tenderId) } },
+      });
+      const { data: tenders } = await useFetch(
+        () => `${baseURL}/api/tender/findMany?q=${tenderQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          transform: (result) => result.data,
+        }
+      );
+      tenders.value.forEach((tender) => {
+        tendersMap.value[tender.id] = tender;
       });
     },
   }

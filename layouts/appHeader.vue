@@ -25,7 +25,11 @@
         </div>
         <div class="column is-4 is-vcentered">
           <div class="buttons is-right tool-buttons">
-            <nuxt-link class="button is-link" :to="{ path: '/tenders/create' }">
+            <nuxt-link
+              v-if="store.user.role == 'tender_owner'"
+              class="button is-link"
+              :to="{ path: '/tenders/create' }"
+            >
               <span class="icon">
                 <i class="fa fa-business-time"></i>
               </span>

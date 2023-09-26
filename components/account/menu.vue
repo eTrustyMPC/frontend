@@ -3,7 +3,7 @@
     <div class="content steps-menu">
       <ul>
         <li
-          v-for="(key, path) in items"
+          v-for="(key, path) in getMenuItems"
           :key="key"
           :class="path == router.path.substring(1) ? 'is-active' : ''"
         >
@@ -20,21 +20,31 @@
 </template>
 
 <script lang="ts">
+import { useUserStore } from "@/stores/user";
+
 export default defineComponent({
   name: "AccountMenu",
   components: {},
   data: () => {
     return {
-      items: {
-        account: "Account",
-        "account/tenders": "My tenders",
-        "account/offers": "My offers",
-        "account/estimation/tenders": "Estimation",
-      },
       router: useRoute(),
+      store: useUserStore(),
     };
   },
-  computed: {},
+  computed: {
+    getMenuItems() {
+      const userRole = this.store.user.role;
+      const menuItems = {
+        account: "Account",
+      };
+      if (userRole === "tender_owner")
+        menuItems["account/tenders"] = "My tenders";
+      if (userRole === "applicant") menuItems["account/offers"] = "My offers";
+      if (userRole === "jury_member")
+        menuItems["account/estimation/tenders"] = "Estimation";
+      return menuItems;
+    },
+  },
   methods: {
     logout() {
       if (process.client) {
