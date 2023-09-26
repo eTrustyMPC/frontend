@@ -7,7 +7,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const store = useUserStore();
   const route = useRoute();
 
+  if (to.path === "/signup") return;
   if (to.path !== "/signin" && !user.value) return navigateTo("/signin");
+
+  if (!user.value) return;
 
   const token = supabase.auth.headers.Authorization.replace("Bearer ", "");
 
@@ -27,7 +30,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   store.saveUserInfo(
     userInfo.id,
-    userInfo.email,
+    user.value.email,
     token,
     userInfo.role,
     userInfo.syncTxId,

@@ -35,21 +35,7 @@
               </span>
               <span>Create tender</span>
             </nuxt-link>
-            <nuxt-link
-              v-if="!store.isAuth"
-              class="button is-link"
-              :to="{ path: '/signin' }"
-            >
-              <span class="icon">
-                <i class="fa fa-sign-in"></i>
-              </span>
-              <span>Sign In</span>
-            </nuxt-link>
-            <nuxt-link
-              v-if="store.isAuth"
-              class="button user-account"
-              :to="{ path: '/account' }"
-            >
+            <nuxt-link class="button user-account" :to="{ path: '/account' }">
               <span class="icon">
                 <i class="fa fa-user"></i>
               </span>

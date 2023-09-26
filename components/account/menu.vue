@@ -10,9 +10,7 @@
           <nuxt-link :to="{ path: `/${path}` }">{{ key }}</nuxt-link>
         </li>
         <li>
-          <nuxt-link :to="{ path: `/signin` }" @click="logout"
-            >Logout</nuxt-link
-          >
+          <a href="#" @click="logout">Logout</a>
         </li>
       </ul>
     </div>
@@ -38,9 +36,10 @@ export default defineComponent({
       const menuItems = {
         account: "Account",
       };
+      if (!this.store.user.selectedRole) return menuItems;
       if (userRole === "tender_owner")
         menuItems["account/tenders"] = "My tenders";
-      if (userRole === "applicant") menuItems["account/offers"] = "My offers";
+      if (userRole === "application") menuItems["account/offers"] = "My offers";
       if (userRole === "jury_member")
         menuItems["account/estimation/tenders"] = "Estimation";
       return menuItems;
@@ -49,8 +48,9 @@ export default defineComponent({
   methods: {
     async logout() {
       if (process.client) {
-        await supabase.signOut();
+        await this.supabase.auth.signOut();
       }
+      window.location.reload();
     },
   },
 });
