@@ -59,6 +59,7 @@ export default defineComponent({
       notificationText: "",
       isLoading: false,
       isShowPassword: false,
+      supabase: useSupabaseClient(),
     };
   },
   computed: {},
@@ -67,6 +68,11 @@ export default defineComponent({
       setTimeout(() => (this.isShowNotification = false), 3000);
     },
     async signin() {
+      const { data1, error } = await this.supabase.auth.signInWithOAuth({
+    provider: 'discord',
+  })
+      console.log(data1)
+      return
       if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "") {
         this.isShowNotification = true;
         this.notificationText = "Enter your e-mail and password!";
