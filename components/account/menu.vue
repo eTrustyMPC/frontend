@@ -29,6 +29,7 @@ export default defineComponent({
     return {
       router: useRoute(),
       store: useUserStore(),
+      supabase: useSupabaseClient(),
     };
   },
   computed: {
@@ -46,9 +47,9 @@ export default defineComponent({
     },
   },
   methods: {
-    logout() {
+    async logout() {
       if (process.client) {
-        localStorage.removeItem("userInfo");
+        await supabase.signOut();
       }
     },
   },

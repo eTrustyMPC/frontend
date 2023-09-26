@@ -27,7 +27,7 @@ export default defineNuxtConfig({
     },
   },
   router: { middleware: ["auth"] },
-  modules: ["@pinia/nuxt"],
+  modules: ["@pinia/nuxt", "@nuxtjs/supabase"],
   runtimeConfig: {
     public: {
       baseURL: process.env.BASE_URL || "http://localhost:5000",
@@ -35,5 +35,11 @@ export default defineNuxtConfig({
   },
   build: {
     transpile: ["@vuepic/vue-datepicker"],
+  },
+  supabase: {
+    redirectOptions: {
+      login: "/signin",
+      callback: "/confirm",
+    },
   },
 });

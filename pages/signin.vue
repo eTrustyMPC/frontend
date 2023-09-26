@@ -25,10 +25,21 @@
               </div>
             </div>
           </div>
-          <button class="button" @click="signin">
-            Login
-            <div v-if="isLoading" class="loader is-loading"></div>
-          </button>
+          <div class="buttons">
+            <button class="button email" @click="signin">
+              <span class="icon">
+                <i class="fa fa-unlock"></i>
+              </span>
+              <span>Login</span>
+              <div v-if="isLoading" class="loader is-loading"></div>
+            </button>
+            <button class="button discord" @click="signInWithOAuth">
+              <span class="icon">
+                <i class="fa-brands fa-discord"></i>
+              </span>
+              <span>with Discord</span>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -59,12 +70,20 @@ export default defineComponent({
       notificationText: "",
       isLoading: false,
       isShowPassword: false,
+      supabase: useSupabaseClient(),
+      user: useSupabaseUser(),
     };
   },
   computed: {},
   methods: {
     closeNotification() {
       setTimeout(() => (this.isShowNotification = false), 3000);
+    },
+    async signInWithOAuth() {
+      await this.supabase.auth.signInWithOAuth({
+        provider: "discord",
+        options: { redirectTo: `${window.location.origin}/confirm` },
+      });
     },
     async signin() {
       if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "") {
@@ -184,7 +203,8 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
     color: #fff;
     transition: all 0.5s;
     width: 100%;
-    margin-top: 25px;
+    margin-top: 10px;
+    width: calc(50% - 5px);
 
     &:hover {
       background: #273038;
@@ -192,6 +212,14 @@ $fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
 
     .loader {
       margin-left: 10px;
+    }
+
+    &.discord {
+      background: #273038;
+
+      &:hover {
+        background: #f7b452;
+      }
     }
   }
 
