@@ -5,7 +5,7 @@
         <div class="column is-4"></div>
         <div class="column is-4"></div>
         <div class="column is-3">
-          <h4 class="title is-4 has-text-centered">Sign In</h4>
+          <h4 class="title is-4 has-text-centered">Sign Up</h4>
           <EInput v-model:value="email" label="E-mail" name="email" />
           <div class="password">
             <div class="input-field field">
@@ -26,11 +26,11 @@
             </div>
           </div>
           <div class="buttons">
-            <button class="button email" @click="signin">
+            <button class="button email" @click="signup">
               <span class="icon">
                 <i class="fa fa-unlock"></i>
               </span>
-              <span>Login</span>
+              <span>Create</span>
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
             <button class="button discord" @click="signInWithOAuth">
@@ -41,8 +41,8 @@
             </button>
           </div>
           <span class="signup-link">
-            No account yet?
-            <nuxt-link :to="{ path: `/signup` }">Sign Up</nuxt-link>
+            Already have an account?
+            <nuxt-link :to="{ path: `/signin` }">Sign In</nuxt-link>
           </span>
         </div>
       </div>
@@ -62,13 +62,13 @@ definePageMeta({
 });
 
 export default defineComponent({
-  name: "SignIn",
+  name: "SignUp",
   components: { EInput },
   data: () => {
     return {
       isShowSignInModal: false,
-      email: "nikita@etrusty.io",
-      password: "niktest1",
+      email: "",
+      password: "",
       isShowNotification: false,
       notificationText: "",
       isLoading: false,
@@ -82,13 +82,7 @@ export default defineComponent({
     closeNotification() {
       setTimeout(() => (this.isShowNotification = false), 3000);
     },
-    async signInWithOAuth() {
-      await this.supabase.auth.signInWithOAuth({
-        provider: "discord",
-        options: { redirectTo: `${window.location.origin}/confirm` },
-      });
-    },
-    async signin() {
+    async signup() {
       if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "") {
         this.isShowNotification = true;
         this.notificationText = "Enter your e-mail and password!";
@@ -98,7 +92,7 @@ export default defineComponent({
 
       this.isLoading = true;
 
-      const { error } = await this.supabase.auth.signInWithPassword({
+      const { error } = await this.supabase.auth.signUp({
         email: this.email,
         password: this.password,
       });

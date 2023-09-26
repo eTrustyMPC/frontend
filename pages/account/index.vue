@@ -3,7 +3,28 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <div v-if="store.user" class="account-wrapper">
+        <div
+          v-if="store.user && !store.user.selectedRole"
+          class="account-wrapper select-role-form"
+        >
+          <ESelect
+            v-model:value="role"
+            label="Role"
+            :values="{
+              application: 'application',
+              jury_member: 'jury_member',
+              tender_owner: 'tender_owner',
+            }"
+          />
+          <button class="button" @click="saveRole">
+            <span>Save</span>
+            <div v-if="isLoading" class="loader is-loading"></div>
+          </button>
+        </div>
+        <div
+          v-if="store.user && store.user.selectedRole"
+          class="account-wrapper"
+        >
           <h3 class="title is-4">Account</h3>
           <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
           <div v-if="store.user.createdAt" class="user-info">
@@ -28,17 +49,42 @@
 <script lang="ts">
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
+import ESelect from "@/components/form/ESelect.vue";
 
 export default defineComponent({
   name: "Account",
-  components: { AccountMenu },
+  components: { AccountMenu, ESelect },
   data: () => {
     return {
+      role: "application",
       store: useUserStore(),
+      isLoading: false,
     };
   },
   computed: {},
-  methods: {},
+  methods: {
+    async saveRole() {
+      this.isLoading = true;
+      const url = this.$config.public.baseURL;
+      await useFetch(() => `${url}/api/user/update`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${this.store.user.token}`,
+        },
+        body: JSON.stringify({
+          data: {
+            role: this.role,
+          },
+          where: {
+            id: this.store.user.id,
+          },
+        }),
+      });
+      this.store.setSelectedRole(true);
+      this.store.setRole(this.role);
+      this.isLoading = false;
+    },
+  },
 });
 </script>
 
@@ -49,6 +95,44 @@ export default defineComponent({
 
   a {
     color: #f7b452;
+  }
+}
+
+.select-role-form {
+  max-width: 30%;
+
+  .select,
+  select {
+    width: 100%;
+  }
+
+  .button {
+    margin-top: 15px;
+    background: #e5c076;
+    color: #fff;
+    border: 1px solid #e5c076 !important;
+    transition: 0.3s all;
+    width: 100%;
+
+    .loader {
+      border-right-color: #fff;
+      border-top-color: #fff;
+    }
+
+    span {
+      margin-right: 5px;
+    }
+
+    &:hover,
+    &:focus {
+      background: #fff;
+      color: #273038;
+
+      .loader {
+        border-right-color: #e5c076;
+        border-top-color: #e5c076;
+      }
+    }
   }
 }
 </style>
