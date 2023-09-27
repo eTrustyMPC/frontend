@@ -16,6 +16,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   const config = useRuntimeConfig();
   const baseURL = config.public.baseURL;
+
   const userQuery = JSON.stringify({ where: { uuid: user.value.id } });
   const response = await fetch(`${baseURL}/api/user/findFirst?q=${userQuery}`, {
     headers: {

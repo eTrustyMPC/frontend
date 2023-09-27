@@ -27,9 +27,6 @@
         >
           <h3 class="title is-4">Account</h3>
           <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
-          <div v-if="store.user.role" class="user-info">
-            <b>Role:</b> {{ store.user.role.replace("_", " ") }}
-          </div>
           <div v-if="store.user.createdAt" class="user-info">
             <b>Created at:</b> {{ store.user.createdAt }}
           </div>

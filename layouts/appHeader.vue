@@ -26,7 +26,9 @@
         <div class="column is-7 is-vcentered">
           <div class="buttons is-right tool-buttons">
             <nuxt-link
-              v-if="store.user.role == 'tender_owner'"
+              v-if="
+                store.user.selectedRole && store.user.role == 'tender_owner'
+              "
               class="button is-link"
               :to="{ path: '/tenders/create' }"
             >
@@ -39,7 +41,7 @@
               <span class="icon">
                 <i class="fa fa-user"></i>
               </span>
-              <span>{{ store.user.email }}</span>
+              <span>{{ store.user.email }} {{ getRole }}</span>
             </nuxt-link>
           </div>
         </div>
@@ -61,6 +63,17 @@ export default defineComponent({
   },
   data: () => {
     return {};
+  },
+  computed: {
+    getRole() {
+      if (!this.store.user.selectedRole) return "";
+      const roleNames = {
+        tender_owner: "Purchaser",
+        application: "Bidder",
+        jury_member: "Evaluation Committee Member",
+      };
+      return `(${roleNames[this.store.user.role]})`;
+    },
   },
   methods: {},
 });
