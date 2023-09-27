@@ -25,8 +25,32 @@
               </div>
             </div>
           </div>
+          <div class="password">
+            <div class="input-field field">
+              <label class="label">Confirm password</label>
+              <div class="control">
+                <input
+                  v-model="confirm_password"
+                  class="input"
+                  name="confirm_password"
+                  :type="isShowConfirmPassword ? 'text' : 'password'"
+                />
+                <span
+                  class="icon"
+                  @click="isShowConfirmPassword = !isShowConfirmPassword"
+                >
+                  <i
+                    :class="[
+                      'fa',
+                      isShowConfirmPassword ? 'fa-eye' : 'fa-eye-slash',
+                    ]"
+                  ></i>
+                </span>
+              </div>
+            </div>
+          </div>
           <div class="buttons">
-            <button class="button email" @click="signup">
+            <button class="button email" :disabled="isLoading" @click="signup">
               <span class="icon">
                 <i class="fa fa-unlock"></i>
               </span>
@@ -69,10 +93,12 @@ export default defineComponent({
       isShowSignInModal: false,
       email: "",
       password: "",
+      confirm_password: "",
       isShowNotification: false,
       notificationText: "",
       isLoading: false,
       isShowPassword: false,
+      isShowConfirmPassword: false,
       supabase: useSupabaseClient(),
       user: useSupabaseUser(),
     };
@@ -90,22 +116,36 @@ export default defineComponent({
         return;
       }
 
-      this.isLoading = true;
-
-      const { error } = await this.supabase.auth.signUp({
-        email: this.email,
-        password: this.password,
-      });
-
-      this.isLoading = false;
-      if (error) {
+      if (this.password !== this.confirm_password) {
         this.isShowNotification = true;
-        this.notificationText = error.message;
+        this.notificationText = "The password confirmation does not match!";
         this.closeNotification();
         return;
       }
 
-      navigateTo("/account");
+      this.isLoading = true;
+      const baseURL = this.$config.public.baseURL;
+      const signUpResponse = await fetch(`${baseURL}/api/auth/signUp`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: this.email,
+          password: this.password,
+        }),
+      });
+
+      this.isLoading = false;
+      if (signUpResponse.status !== 200) {
+        const data = await signUpResponse.json();
+        this.isShowNotification = true;
+        this.notificationText = data.error.message;
+        this.closeNotification();
+      }
+
+      // navigateTo("/account");
     },
   },
 });

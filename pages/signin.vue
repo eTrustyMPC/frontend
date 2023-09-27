@@ -26,7 +26,7 @@
             </div>
           </div>
           <div class="buttons">
-            <button class="button email" @click="signin">
+            <button class="button email" :disabled="isLoading" @click="signin">
               <span class="icon">
                 <i class="fa fa-unlock"></i>
               </span>
