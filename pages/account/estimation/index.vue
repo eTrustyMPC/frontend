@@ -9,27 +9,35 @@
         </div>
         <div class="offers-list">
           <div v-for="offer in offers" :key="offer" class="box">
-            <div class="offer-info">
-              <b>Tender: </b>
-              <nuxt-link
-                :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
-                >{{ getTenderByOffer(offer).title }}</nuxt-link
-              >
+            <div class="columns">
+              <div class="column is-4">
+                <div class="offer-info">
+                  <b>Tender: </b>
+                  <nuxt-link
+                    :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
+                    >{{ getTenderByOffer(offer).title }}</nuxt-link
+                  >
+                </div>
+                <div class="offer-info">
+                  <b>Lot: </b>
+                  {{ lotsMap[offer.lotId].title }}
+                </div>
+                <div class="offer-info">
+                  <b>Criterion: </b>
+                  {{ getCriterionByOffer(offer).title }}
+                </div>
+              </div>
+              <div class="column is-8">
+                <div class="offer-info">
+                  <b>Offer description: </b> {{ offer.description }}
+                </div>
+                <div class="offer-info"><b>Cost: </b> {{ offer.cost }}</div>
+              </div>
             </div>
-            <div class="offer-info">
-              <b>Lot: </b>
-              {{ lotsMap[offer.lotId].title }}
-            </div>
-            <div class="offer-info">
-              <b>Criterion: </b>
-              {{ getCriterionByOffer(offer).title }}
-            </div>
-            <div class="offer-info">
-              <b>Offer description: </b> {{ offer.description }}
-            </div>
-            <div class="offer-info"><b>Cost: </b> {{ offer.cost }}</div>
             <div v-if="recordedVotes.includes(offer.id)" class="offer-info">
-              <b>Your vote has already been counted</b>
+              Your vote has already been counted.
+              <br />
+              Your vote: <b>{{ offerValueMap[offer.id] }}</b>
             </div>
             <button
               class="button estimation-button"
@@ -96,6 +104,7 @@ const criterionsMap = ref({});
 const recordedVotes = ref([]);
 const estimationValue = ref(null);
 const isShowNotification = ref(false);
+const offerValueMap = ref({});
 const isLoading = ref(false);
 const isShowModal = ref(false);
 const modalOffer = ref(null);
@@ -187,6 +196,9 @@ const { pending } = useFetch(
           transform: (result) => result.data,
         }
       );
+      scoreInfo.value.forEach((score) => {
+        offerValueMap.value[score.offerId] = score.value;
+      });
       recordedVotes.value = scoreInfo.value.map((s) => s.offerId);
       offers.value = offersInfo.value;
     },
