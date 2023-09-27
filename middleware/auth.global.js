@@ -17,14 +17,15 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const config = useRuntimeConfig();
   const baseURL = config.public.baseURL;
   const userQuery = JSON.stringify({ where: { uuid: user.value.id } });
-  const response = await fetch(`${baseURL}/api/user/findFirst`, {
+  const response = await fetch(`${baseURL}/api/user/findFirst?q=${userQuery}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
   const userInfo = (await response.json()).data;
 
-  if (to.path !== "/signin" && response.status !== 200) {
+  if (to.path !== "/signin" && !userInfo) {
+    await supabase.auth.signOut();
     return navigateTo("/signin");
   }
 

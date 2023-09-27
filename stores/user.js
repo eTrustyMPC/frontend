@@ -31,7 +31,7 @@ export const useUserStore = defineStore("user", {
   actions: {
     setSelectedRole(flag) {
       this.selectedRole = flag;
-      localStorage.setItem("selectedRole", flag);
+      localStorage.setItem(`selectedRole${this.id}`, flag);
     },
     setRole(role) {
       this.role = role;
@@ -44,7 +44,8 @@ export const useUserStore = defineStore("user", {
       this.syncTxId = syncTxId;
       this.createdAt = moment(new Date(createdAt)).format("YYYY-MM-DD HH:mm");
       this.isAuth = true;
-      this.selectedRole = JSON.parse(localStorage.getItem("selectedRole"));
+      this.selectedRole =
+        JSON.parse(localStorage.getItem(`selectedRole${id}`)) ?? false;
       if (process.client)
         localStorage.setItem(
           "userInfo",

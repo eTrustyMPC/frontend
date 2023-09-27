@@ -33,6 +33,7 @@ export default defineComponent({
   computed: {
     getMenuItems() {
       const userRole = this.store.user.role;
+
       const menuItems = {
         account: "Account",
       };
