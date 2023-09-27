@@ -42,7 +42,7 @@ export default defineComponent({
         menuItems["account/tenders"] = "My tenders";
       if (userRole === "application") menuItems["account/offers"] = "My offers";
       if (userRole === "jury_member")
-        menuItems["account/estimation/tenders"] = "Estimation";
+        menuItems["account/estimation/"] = "Estimation";
       return menuItems;
     },
   },

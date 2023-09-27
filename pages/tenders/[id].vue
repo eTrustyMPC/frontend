@@ -18,7 +18,7 @@
         <div
           v-if="
             lots.length > 0 &&
-            store.user.role == 'applicant' &&
+            store.user.role === 'application' &&
             tender.ownerId !== store.user.id
           "
           class="buttons"
