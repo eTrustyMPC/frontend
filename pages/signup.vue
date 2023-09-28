@@ -145,7 +145,7 @@ export default defineComponent({
         this.closeNotification();
       }
 
-      // navigateTo("/account");
+      navigateTo("/signin");
     },
   },
 });
