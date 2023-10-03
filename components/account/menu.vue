@@ -5,7 +5,7 @@
         <li
           v-for="(key, path) in getMenuItems"
           :key="key"
-          :class="path == router.path.substring(1) ? 'is-active' : ''"
+          :class="path === router.path.substring(1) ? 'is-active' : ''"
         >
           <nuxt-link :to="{ path: `/${path}` }">{{ key }}</nuxt-link>
         </li>
@@ -38,8 +38,10 @@ export default defineComponent({
         account: "Account",
       };
       if (!this.store.user.selectedRole) return menuItems;
-      if (userRole === "tender_owner")
+      if (userRole === "tender_owner") {
         menuItems["account/tenders"] = "My tenders";
+        menuItems["account/tenders/winners"] = "Tender winners";
+      }
       if (userRole === "application") menuItems["account/offers"] = "My offers";
       if (userRole === "jury_member")
         menuItems["account/estimation/"] = "Estimation";
