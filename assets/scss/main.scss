@@ -168,6 +168,7 @@ button {
   transition: all 0.5s ease-in-out;
   background-color: #e5c076;
   color: #fff;
+  white-space: pre-wrap;
 
   &.is-active {
     -webkit-transform: translateX(0%);

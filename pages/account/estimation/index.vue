@@ -8,15 +8,19 @@
           <div class="loader is-loading"></div>
         </div>
         <div class="offers-list">
-          <div v-for="offer in offers" :key="offer" class="box">
+          <div
+            v-for="offer in offers"
+            :key="offer"
+            :set="(tender = getTenderByOffer(offer))"
+            class="box"
+          >
             <div class="columns">
               <div class="column is-4">
                 <div class="offer-info">
                   <b>Tender: </b>
-                  <nuxt-link
-                    :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
-                    >{{ getTenderByOffer(offer).title }}</nuxt-link
-                  >
+                  <nuxt-link :to="{ path: `/tenders/${tender.id}` }">{{
+                    tender.title
+                  }}</nuxt-link>
                 </div>
                 <div class="offer-info">
                   <b>Lot: </b>
@@ -39,9 +43,21 @@
               <br />
               Your vote: <b>{{ offerValueMap[offer.id] }}</b>
             </div>
+            <div
+              v-if="
+                moment(tender.deadlineAt) < moment() &&
+                !recordedVotes.includes(offer.id)
+              "
+              class="offer-info"
+            >
+              Voting time has expired
+            </div>
             <button
               class="button estimation-button"
-              :disabled="recordedVotes.includes(offer.id)"
+              :disabled="
+                recordedVotes.includes(offer.id) ||
+                moment(tender.deadlineAt) < moment()
+              "
               @click="showEstimationModal(offer)"
             >
               Estimate
@@ -86,6 +102,7 @@
 
 <script setup lang="ts">
 import { nextTick } from "vue";
+import moment from "moment";
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
 import EInput from "@/components/form/EInput.vue";
@@ -211,6 +228,8 @@ function showEstimationModal(offer) {
 }
 
 async function estimate() {
+  const estimation = parseInt(estimationValue.value);
+  const offerId = modalOffer.value.id;
   isLoading.value = true;
   const lot = lotsMap.value[modalOffer.value.lotId];
   await useFetch(() => `${baseURL}/api/score/create`, {
@@ -224,13 +243,14 @@ async function estimate() {
     body: JSON.stringify({
       data: {
         ownerId: store.user.id,
-        offerId: modalOffer.value.id,
-        value: parseInt(estimationValue.value),
+        offerId,
+        value: estimation,
         criterionId: criterionsMap.value[lot.criterionId].id,
       },
     }),
   });
-  recordedVotes.value.push(modalOffer.value.id);
+  offerValueMap.value[offerId] = estimation;
+  recordedVotes.value.push(offerId);
   isShowNotification.value = true;
   isLoading.value = false;
   isShowModal.value = false;

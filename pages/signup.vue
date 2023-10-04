@@ -71,7 +71,13 @@
         </div>
       </div>
     </div>
-    <div :class="['notification', isShowNotification ? 'is-active' : '']">
+    <div
+      :class="[
+        'notification',
+        'for-signup',
+        isShowNotification ? 'is-active' : '',
+      ]"
+    >
       <button class="delete" @click="isShowNotification = false"></button>
       {{ notificationText }}
     </div>
@@ -101,6 +107,7 @@ export default defineComponent({
       isShowConfirmPassword: false,
       supabase: useSupabaseClient(),
       user: useSupabaseUser(),
+      passwordRegExp: /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/,
     };
   },
   computed: {},
@@ -109,9 +116,16 @@ export default defineComponent({
       setTimeout(() => (this.isShowNotification = false), 3000);
     },
     async signup() {
-      if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "") {
+      if (!this.passwordRegExp.test(this.password)) {
         this.isShowNotification = true;
-        this.notificationText = "Enter your e-mail and password!";
+        this.notificationText =
+          "Your password must contain:\n- At least one digit\n- At least one lowercase character\n- At least one uppercase character\n- At least one special character\n- At least 8 characters in length";
+        this.closeNotification();
+        return;
+      }
+      if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email)) {
+        this.isShowNotification = true;
+        this.notificationText = "Enter your e-mail!";
         this.closeNotification();
         return;
       }
