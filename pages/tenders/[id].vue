@@ -80,7 +80,8 @@
               <span class="icon">
                 <i class="fa fa-envelope"></i>
               </span>
-              <span>{{ user.email }}</span>
+              <span v-if="isLoadingUser" class="loader is-loading"></span>
+              <span v-if="!isLoadingUser">{{ user.email }}</span>
             </div>
             <div class="tender-info-option transaction">
               <span class="icon">
@@ -235,6 +236,7 @@ const apiUrl = config.public.baseURL;
 const tenderIdQuery = JSON.stringify({ where: { id: Number(tenderId) } });
 const organization = ref({});
 const user = ref({});
+const isLoadingUser = ref(true);
 const isLoading = ref(false);
 const isShowNotification = ref(false);
 
@@ -270,6 +272,7 @@ const { data: tender, pending } = useFetch(
           Authorization: `Bearer ${store.user.token}`,
         },
         onResponse({ response }) {
+          isLoadingUser.value = false;
           user.value = response._data.data;
         },
       });
@@ -363,6 +366,10 @@ function copyHash(hash) {
     margin-right: 5px;
     justify-content: left;
     color: #e5c076;
+  }
+
+  .loader {
+    display: inline-block;
   }
 }
 
