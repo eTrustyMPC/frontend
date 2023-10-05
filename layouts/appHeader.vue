@@ -64,7 +64,7 @@ export default defineComponent({
   },
   computed: {
     getRole() {
-      if (!this.store.user.selectedRole) return "";
+      if (!this.store.user.role) return "";
       const roleNames = {
         tender_owner: "Purchaser",
         application: "Bidder",
