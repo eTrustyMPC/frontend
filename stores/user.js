@@ -10,7 +10,6 @@ export const useUserStore = defineStore("user", {
     role: null,
     syncTxId: null,
     createdAt: null,
-    selectedRole: false,
   }),
 
   getters: {
@@ -22,17 +21,12 @@ export const useUserStore = defineStore("user", {
         role: state.role,
         syncTxId: state.syncTxId,
         createdAt: state.createdAt,
-        selectedRole: state.selectedRole,
         isAuth: state.isAuth,
       };
     },
   },
 
   actions: {
-    setSelectedRole(flag) {
-      this.selectedRole = flag;
-      localStorage.setItem(`selectedRole${this.id}`, flag);
-    },
     setRole(role) {
       this.role = role;
     },
@@ -44,8 +38,6 @@ export const useUserStore = defineStore("user", {
       this.syncTxId = syncTxId;
       this.createdAt = moment(new Date(createdAt)).format("YYYY-MM-DD HH:mm");
       this.isAuth = true;
-      this.selectedRole =
-        JSON.parse(localStorage.getItem(`selectedRole${id}`)) ?? false;
       if (process.client)
         localStorage.setItem(
           "userInfo",

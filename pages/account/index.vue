@@ -4,7 +4,7 @@
       <AccountMenu />
       <div class="column is-8 box">
         <div
-          v-if="store.user && !store.user.selectedRole"
+          v-if="store.user && !store.user.role"
           class="account-wrapper select-role-form"
         >
           <ESelect
@@ -21,10 +21,7 @@
             <div v-if="isLoading" class="loader is-loading"></div>
           </button>
         </div>
-        <div
-          v-if="store.user && store.user.selectedRole"
-          class="account-wrapper"
-        >
+        <div v-if="store.user && store.user.role" class="account-wrapper">
           <h3 class="title is-4">Account</h3>
           <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
           <div v-if="store.user.createdAt" class="user-info">
@@ -80,7 +77,6 @@ export default defineComponent({
           },
         }),
       });
-      this.store.setSelectedRole(true);
       this.store.setRole(this.role);
       this.isLoading = false;
     },
