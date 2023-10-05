@@ -70,8 +70,8 @@ const criterionsMap = ref({});
 const scoreMap = ref({});
 const query = JSON.stringify({
   where: {
-    jury_emails: {
-      array_contains: store.user.email,
+    ownerId: {
+      equals: store.user.id,
     },
   },
 });
