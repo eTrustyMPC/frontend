@@ -126,6 +126,7 @@ function getTenders() {
       Authorization: `Bearer ${store.token}`,
     },
     onResponse({ response }) {
+      isLoading.value = false;
       tenders.value = [...tenders.value, ...response._data.data];
       useFetch(() => `${countUrl}?q=${queryForCount}`, {
         headers: {
@@ -133,7 +134,6 @@ function getTenders() {
         },
         onResponse({ response }) {
           maxCountTenders.value = response._data.data;
-          isLoading.value = false;
         },
       });
     },
@@ -142,7 +142,7 @@ function getTenders() {
 
 function getExpiredDaysText(tender) {
   const days = moment(tender.finishAt).diff(moment(), "days");
-  if (days < 1) return;
+  if (isNaN(days) || days < 1) return;
   const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
   const part = relativeTime.formatToParts(days, "days")[2].value;
   return `${days} ${part} to go`;
