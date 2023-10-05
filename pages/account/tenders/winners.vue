@@ -37,10 +37,10 @@
                   <b>No winner</b>
                 </div>
                 <div v-if="winner" class="offer-info">
-                  <b>Bidder e-mail: {{ getUserEmail(winner.ownerId).email }}</b>
+                  <b>Winner email: {{ getUserEmail(winner.ownerId).email }}</b>
                 </div>
                 <div v-if="winner" class="offer-info">
-                  <b>Bidder cost: {{ winner.cost }}</b>
+                  <b>Winner price: {{ winner.cost }}</b>
                 </div>
               </div>
             </div>

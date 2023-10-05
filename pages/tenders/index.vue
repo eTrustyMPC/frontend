@@ -60,7 +60,14 @@
                 ></div>
               </div>
             </div>
-            <b>Transaction: {{ subHash(tender.syncTxId) }}</b>
+            <b>Transaction: {{ subHash(tender.syncTxId) }}</b
+            ><br />
+            <b
+              >Bid before: {{ moment(tender.finishAt).format("YYYY-MM-DD") }}</b
+            >
+            <div v-if="getExpiredDaysText(tender)" class="expired-days">
+              {{ getExpiredDaysText(tender) }}
+            </div>
           </nuxt-link>
           <div
             v-if="tenders && maxCountTenders != tenders.length && !isLoading"
@@ -81,6 +88,7 @@
 
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
+import moment from "moment";
 import { useUserStore } from "@/stores/user";
 import ERadio from "@/components/form/ERadio.vue";
 import { subHash } from "@/utils/common";
@@ -103,7 +111,7 @@ const isLoading = ref(true);
 
 function getTenders() {
   const url = new URL(tendersURL);
-  const whereQuery = {};
+  const whereQuery = { orderBy: { createdAt: "desc" } };
   const queryData = {
     take: pageLimit,
     skip: pageOffset,
@@ -130,6 +138,14 @@ function getTenders() {
       });
     },
   });
+}
+
+function getExpiredDaysText(tender) {
+  const days = moment(tender.finishAt).diff(moment(), "days");
+  if (days < 1) return;
+  const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const part = relativeTime.formatToParts(days, "days")[2].value;
+  return `${days} ${part} to go`;
 }
 
 function getStatusColorClass(status: string): string {
@@ -178,6 +194,21 @@ getTenders();
 
 .tenders-container {
   margin-left: auto;
+
+  .box {
+    position: relative;
+
+    .expired-days {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: #e5c076;
+      color: #fff;
+      transition: 0.3s all;
+    }
+  }
 }
 
 .tenders-filter {
@@ -245,6 +276,11 @@ getTenders();
 
       h4 {
         color: #fff;
+      }
+
+      .expired-days {
+        background: #fff;
+        color: #e5c076;
       }
     }
   }

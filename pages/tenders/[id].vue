@@ -46,8 +46,17 @@
                 <i class="fa fa-calendar"></i>
               </span>
               <span
-                >{{ moment(tender.startAt).format("YYYY-MM-DD HH:mm") }} -
-                {{ moment(tender.finishAt).format("YYYY-MM-DD HH:mm") }}</span
+                >{{ moment(tender.startAt).format("YYYY-MM-DD") }} -
+                {{ moment(tender.finishAt).format("YYYY-MM-DD") }}</span
+              >
+            </div>
+            <div v-if="tender.deadlineAt" class="tender-info-option">
+              <span class="icon">
+                <i class="fa fa-calendar"></i>
+              </span>
+              <span>
+                <b>Estimation Deadlines: </b
+                >{{ moment(tender.deadlineAt).format("YYYY-MM-DD") }}</span
               >
             </div>
             <!-- <div class="tender-info-option description">
