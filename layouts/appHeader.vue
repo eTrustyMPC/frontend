@@ -26,9 +26,7 @@
         <div class="column is-7 is-vcentered">
           <div class="buttons is-right tool-buttons">
             <nuxt-link
-              v-if="
-                store.user.selectedRole && store.user.role == 'tender_owner'
-              "
+              v-if="store.user.role == 'tender_owner'"
               class="button is-link"
               :to="{ path: '/tenders/create' }"
             >
