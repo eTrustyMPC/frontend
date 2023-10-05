@@ -37,7 +37,7 @@ export default defineComponent({
       const menuItems = {
         account: "Account",
       };
-      if (!this.store.user.selectedRole) return menuItems;
+      if (!this.store.user.role) return menuItems;
       if (userRole === "tender_owner") {
         menuItems["account/tenders"] = "My tenders";
         menuItems["account/tenders/winners"] = "Tender winners";
