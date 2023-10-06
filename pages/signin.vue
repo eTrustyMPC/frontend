@@ -67,8 +67,8 @@ export default defineComponent({
   data: () => {
     return {
       isShowSignInModal: false,
-      email: "nikita@etrusty.io",
-      password: "niktest1",
+      email: "_test1@example.com",
+      password: "Test123!",
       isShowNotification: false,
       notificationText: "",
       isLoading: false,

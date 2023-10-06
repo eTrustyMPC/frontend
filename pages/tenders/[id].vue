@@ -35,11 +35,8 @@
         <div v-if="!pending" class="tender-info">
           <div v-if="activeItem == 0" class="tender-info-section">
             <h3 class="title is-4">{{ tender.title }}</h3>
-            <div class="tender-info-option">
-              <span class="icon">
-                <i class="fa fa-circle-info"></i>
-              </span>
-              <span>{{ tender.status }}</span>
+            <div :class="['status', tender.status.toLowerCase()]">
+              {{ tender.status.toLowerCase() }}
             </div>
             <div v-if="tender.startAt" class="tender-info-option">
               <span class="icon">
@@ -347,6 +344,39 @@ function copyHash(hash) {
 .user-info {
   font-size: 18px;
   margin-bottom: 10px;
+}
+
+.tender-info-section {
+  position: relative;
+
+  .title {
+    padding-left: 100px;
+  }
+
+  .status {
+    position: absolute;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 30px;
+    top: 0;
+    left: 0;
+
+    &.active {
+      background-color: green;
+    }
+
+    &.draft {
+      background-color: yellow;
+    }
+
+    &.canceled {
+      background-color: orange;
+    }
+
+    &.finished {
+      background-color: #f7b452;
+    }
+  }
 }
 
 .tender-info-option {

@@ -37,7 +37,7 @@
                   <b>No winner</b>
                 </div>
                 <div v-if="winner" class="offer-info">
-                  <b>Winner email: {{ getUserEmail(winner.ownerId).email }}</b>
+                  <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
                 </div>
                 <div v-if="winner" class="offer-info">
                   <b>Winner price: {{ winner.cost }}</b>
@@ -68,6 +68,7 @@ const tendersMap = ref({});
 const offersMap = ref([]);
 const criterionsMap = ref({});
 const scoreMap = ref({});
+const usersMap = ref({});
 const query = JSON.stringify({
   where: {
     ownerId: {
@@ -84,30 +85,25 @@ function getCriterionByLot(lot) {
   return criterionsMap.value[lot.criterionId];
 }
 
-function getUserEmail(userId) {
-  const userIdQuery = JSON.stringify({
-    where: { id: userId },
-  });
-  const { data: user } = useFetch(
-    () => `${baseURL}/api/user/findFirst?q=${userIdQuery}`,
-    {
-      headers: {
-        Authorization: `Bearer ${store.user.token}`,
-      },
-      transform: (result) => result.data,
-    }
-  );
-  return user.value;
-}
-
 function getWinnerByLot(lot) {
   const offers = offersMap.value[lot.id];
-  if (!offers) return;
+  if (!offers) return null;
   const estimationsOfferMap = {};
+  if (
+    !Object.keys(scoreMap.value)
+      .map((s) => Number(s))
+      .some((r) => offers.map((o) => o.id).includes(r))
+  )
+    return null;
+  const countEstimation = offers.reduce(
+    (c, o) => c + scoreMap.value[o.id].length,
+    0
+  );
   offers.forEach((offer) => {
     const estimations = scoreMap.value[offer.id];
+    if (!estimations) return;
     estimationsOfferMap[offer.id] =
-      estimations.reduce((p, s) => p + s.value, 0) / estimations.length;
+      estimations.reduce((p, s) => p + s.value, 0) / countEstimation;
   });
   const winnerOfferId = Object.keys(estimationsOfferMap).reduce((acc, item) =>
     estimationsOfferMap[acc] > estimationsOfferMap[item] ? acc : item
@@ -175,6 +171,23 @@ const { pending } = useFetch(
       offersInfo.value.forEach((offer) => {
         if (!offersMap.value[offer.lotId]) offersMap.value[offer.lotId] = [];
         offersMap.value[offer.lotId].push(offer);
+      });
+
+      const userIdQuery = JSON.stringify({
+        where: { id: { in: offersInfo.value.map((o) => o.ownerId) } },
+      });
+      const { data: users } = await useFetch(
+        () => `${baseURL}/api/user/findMany?q=${userIdQuery}`,
+        {
+          headers: {
+            Authorization: `Bearer ${store.user.token}`,
+          },
+          transform: (result) => result.data,
+        }
+      );
+
+      users.value.forEach((user) => {
+        usersMap.value[user.id] = user;
       });
 
       const scoreQuery = JSON.stringify({

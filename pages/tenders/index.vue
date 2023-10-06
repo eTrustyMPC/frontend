@@ -309,23 +309,6 @@ getTenders();
   border-radius: 50%;
 }
 
-/* Define different color classes for different statuses */
-.status-icon.finished {
-  background-color: white;
-}
-
-.status-icon.canceled {
-  background-color: orange;
-}
-
-.status-icon.draft {
-  background-color: yellow;
-}
-
-.status-icon.active {
-  background-color: green;
-}
-
 .tender-info {
   display: flex;
   flex-direction: column;
