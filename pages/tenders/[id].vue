@@ -52,7 +52,7 @@
                 <i class="fa fa-calendar"></i>
               </span>
               <span>
-                <b>Estimation Deadlines: </b
+                <b>Estimation deadlines: </b
                 >{{ moment(tender.deadlineAt).format("YYYY-MM-DD") }}</span
               >
             </div>
@@ -366,7 +366,7 @@ function copyHash(hash) {
     }
 
     &.draft {
-      background-color: yellow;
+      background-color: #273038;
     }
 
     &.canceled {

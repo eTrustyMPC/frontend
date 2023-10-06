@@ -327,7 +327,7 @@ button {
 
 /* Define different color classes for different statuses */
 .status-icon.finished {
-  background-color: white;
+  background-color: #f7b452;
 }
 
 .status-icon.canceled {
@@ -335,7 +335,7 @@ button {
 }
 
 .status-icon.draft {
-  background-color: yellow;
+  background-color: #273038;
 }
 
 .status-icon.active {

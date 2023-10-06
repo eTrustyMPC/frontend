@@ -15,7 +15,7 @@
             class="box"
           >
             <div class="columns">
-              <div class="column is-4">
+              <div class="offer-info-column column is-4">
                 <div class="offer-info">
                   <b>Tender: </b>
                   <nuxt-link
@@ -31,16 +31,32 @@
                   <b>Criterion: </b>
                   {{ getCriterionByLot(lot).title }}
                 </div>
+                <!-- isLoading -->
+
+                <button
+                  v-if="winner && lot.status === 'DRAFT'"
+                  :disabled="isLoading"
+                  class="button"
+                  @click="showWinner(lot)"
+                >
+                  Show winner
+                  <div v-if="isLoading" class="loader is-loading"></div>
+                </button>
               </div>
               <div class="column is-8">
-                <div v-if="!winner" class="offer-info">
+                <div v-if="lot.status === 'DRAFT'" class="offer-info">
                   <b>No winner</b>
                 </div>
-                <div v-if="winner" class="offer-info">
-                  <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
-                </div>
-                <div v-if="winner" class="offer-info">
-                  <b>Winner price: {{ winner.cost }}</b>
+                <div
+                  v-if="lot.status === 'FINISHED'"
+                  class="winner-info-wrapper"
+                >
+                  <div class="offer-info">
+                    <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
+                  </div>
+                  <div class="offer-info">
+                    <b>Winner price: {{ winner.cost }}</b>
+                  </div>
                 </div>
               </div>
             </div>
@@ -69,6 +85,7 @@ const offersMap = ref([]);
 const criterionsMap = ref({});
 const scoreMap = ref({});
 const usersMap = ref({});
+const isLoading = ref(false);
 const query = JSON.stringify({
   where: {
     ownerId: {
@@ -76,6 +93,25 @@ const query = JSON.stringify({
     },
   },
 });
+
+async function showWinner(lot) {
+  isLoading.value = true;
+  const offer = getWinnerByLot(lot);
+  await useFetch(
+    () => `${baseURL}/api/lot/selectWinner?offerId=${offer.id}&lotId=${lot.id}`,
+    {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${store.user.token}`,
+      },
+      onResponse() {
+        lot.status = "FINISHED";
+        isLoading.value = false;
+      },
+    }
+  );
+}
 
 function getTenderByLot(lot) {
   return tendersMap.value[lot.tenderId];
@@ -235,9 +271,26 @@ const { pending } = useFetch(
   }
 }
 
-.offer-info {
-  a {
-    color: #e5c076;
+.offer-info-column {
+  .offer-info {
+    a {
+      color: #e5c076;
+    }
+  }
+
+  .button {
+    background: #f7b452;
+    color: #fff;
+    transition: all 0.5s;
+    margin-top: 10px;
+
+    .loader {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      background: #273038;
+    }
   }
 }
 
