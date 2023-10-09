@@ -45,30 +45,45 @@
       <div class="column is-8 box tenders-container">
         <!-- <ESelect :values="{asc: ''}"/> -->
         <div v-if="tenders" class="tenders-list">
-          <nuxt-link
-            v-for="tender in tenders"
-            :key="tender"
-            class="box"
-            :to="{ path: `/tenders/${tender.id}` }"
-          >
-            <div style="display: flex; justify-content: space-between">
+          <div v-for="tender in tenders" :key="tender" class="box">
+            <nuxt-link :to="{ path: `/tenders/${tender.id}` }">
               <h4 class="title is-4">{{ tender.title }}</h4>
-              <div class="status-container">
-                <span class="status-text">{{ tender.status }}</span>
-                <div
-                  :class="['status-icon', getStatusColorClass(tender.status)]"
-                ></div>
+            </nuxt-link>
+            <div class="tender-card-informations">
+              <div class="tender-info">
+                Transaction:
+                <a
+                  :href="
+                    'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                    tender.syncTxId
+                  "
+                  target="_blank"
+                  >{{ subHash(tender.syncTxId) }}</a
+                >
+              </div>
+              <div class="tender-info">
+                Bid before: {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
               </div>
             </div>
-            <b>Transaction: {{ subHash(tender.syncTxId) }}</b
-            ><br />
-            <b
-              >Bid before: {{ moment(tender.finishAt).format("YYYY-MM-DD") }}</b
-            >
-            <div v-if="getExpiredDaysText(tender)" class="expired-days">
-              {{ getExpiredDaysText(tender) }}
+            <div class="tender-card-metadata">
+              <div class="tender-card-metadata-wrapper">
+                <div :class="['status', tender.status.toLowerCase()]">
+                  {{ tender.status.toLowerCase() }}
+                </div>
+                <div v-if="getExpiredDaysText(tender)" class="expired-days">
+                  {{ getExpiredDaysText(tender) }}
+                </div>
+              </div>
+              <div class="tender-card-metadata-button">
+                <nuxt-link
+                  class="button"
+                  :to="{ path: `/tenders/${tender.id}` }"
+                >
+                  View
+                </nuxt-link>
+              </div>
             </div>
-          </nuxt-link>
+          </div>
           <div
             v-if="tenders && maxCountTenders != tenders.length && !isLoading"
             class="buttons is-centered"
@@ -144,23 +159,15 @@ function getExpiredDaysText(tender) {
   const days = moment(tender.finishAt).diff(moment(), "days");
   if (isNaN(days) || days < 1) return;
   const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  const part = relativeTime.formatToParts(days, "days")[2].value;
-  return `${days} ${part} to go`;
+  console.log(relativeTime.formatToParts(days, "days"));
+  const formatParts = relativeTime.formatToParts(days, "days");
+  if (days > 2) {
+    const part = formatParts[2].value;
+    return `${days} ${part} to go`;
+  }
+  return formatParts[0].value;
 }
 
-function getStatusColorClass(status: string): string {
-  switch (status) {
-    case "FINISHED":
-      return "finished";
-    case "CANCELED":
-      return "canceled";
-    case "DRAFT":
-      return "draft";
-    case "ACTIVE":
-    default:
-      return "active";
-  }
-}
 function resetFilter() {
   pageOffset = 0;
   tenderType.value = null;
@@ -194,21 +201,6 @@ getTenders();
 
 .tenders-container {
   margin-left: auto;
-
-  .box {
-    position: relative;
-
-    .expired-days {
-      position: absolute;
-      right: 15px;
-      bottom: 15px;
-      padding: 3px 10px;
-      border-radius: 50px;
-      background: #e5c076;
-      color: #fff;
-      transition: 0.3s all;
-    }
-  }
 }
 
 .tenders-filter {
@@ -263,24 +255,74 @@ getTenders();
 
 .tenders-list {
   .box {
-    transition: 0.3s all;
+    position: relative;
 
-    h4 {
-      transition: 0.3s all;
+    .tender-card-informations {
+      margin-top: 15px;
+
+      .tender-info {
+        margin-bottom: 5px;
+        font-weight: 700;
+
+        a {
+          color: #e5c076;
+          display: contents;
+        }
+      }
     }
 
-    &:hover {
-      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px #e5c076;
-      background: #e5c076;
-      color: #fff;
+    .tender-card-metadata {
+      position: absolute;
+      right: 15px;
+      top: 15px;
 
-      h4 {
+      .tender-card-metadata-wrapper,
+      .tender-card-metadata-button {
+        display: flex;
+      }
+
+      .tender-card-metadata-button {
+        justify-content: end;
+        margin-top: 30px;
+
+        .button {
+          color: #e5c076;
+          border: 1px solid #e5c076;
+          transition: 0.3s all;
+
+          &:hover {
+            background: #e5c076;
+            color: #fff;
+          }
+        }
+      }
+
+      .status,
+      .expired-days {
+        padding: 3px 10px;
+        border-radius: 50px;
         color: #fff;
+
+        &.active {
+          background-color: #f7b452;
+        }
+
+        &.draft {
+          background-color: #618579;
+        }
+
+        &.canceled {
+          background-color: #413e4a;
+        }
+
+        &.finished {
+          background-color: #9caa86;
+        }
       }
 
       .expired-days {
-        background: #fff;
-        color: #e5c076;
+        background: #e5c076;
+        margin-left: 10px;
       }
     }
   }

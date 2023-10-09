@@ -362,19 +362,19 @@ function copyHash(hash) {
     left: 0;
 
     &.active {
-      background-color: green;
+      background-color: #f7b452;
     }
 
     &.draft {
-      background-color: #273038;
+      background-color: #618579;
     }
 
     &.canceled {
-      background-color: orange;
+      background-color: #413e4a;
     }
 
     &.finished {
-      background-color: #f7b452;
+      background-color: #9caa86;
     }
   }
 }
