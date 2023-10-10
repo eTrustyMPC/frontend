@@ -84,10 +84,7 @@
               </div>
             </div>
           </div>
-          <div
-            v-if="tenders && maxCountTenders != tenders.length && !isLoading"
-            class="buttons is-centered"
-          >
+          <div v-if="isShowButtonViewMore" class="buttons is-centered">
             <button class="button add-more-tenders" @click="loadTenders">
               View more
             </button>
@@ -117,14 +114,15 @@ const apiUrl = config.public.baseURL;
 const tendersURL = `${apiUrl}/api/tender/findMany`;
 const pageLimit = 3;
 let pageOffset = 0;
-const maxCountTenders = ref(0);
 const route = useRoute();
 const router = useRouter();
 const tenderType = ref(route.query.type ? route.query.type : "ACTIVE");
 const tenders = ref([]);
 const isLoading = ref(true);
+const isShowButtonViewMore = ref(false);
 
 function getTenders() {
+  isShowButtonViewMore.value = false;
   const url = new URL(tendersURL);
   const whereQuery = { orderBy: { createdAt: "desc" } };
   const queryData = {
@@ -148,7 +146,8 @@ function getTenders() {
           Authorization: `Bearer ${store.token}`,
         },
         onResponse({ response }) {
-          maxCountTenders.value = response._data.data;
+          if (response._data.data !== tenders.value.length)
+            isShowButtonViewMore.value = true;
         },
       });
     },
@@ -156,16 +155,13 @@ function getTenders() {
 }
 
 function getExpiredDaysText(tender) {
-  const days = moment(tender.finishAt).diff(moment(), "days");
-  if (isNaN(days) || days < 1) return;
-  const relativeTime = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
-  console.log(relativeTime.formatToParts(days, "days"));
-  const formatParts = relativeTime.formatToParts(days, "days");
-  if (days > 2) {
-    const part = formatParts[2].value;
-    return `${days} ${part} to go`;
-  }
-  return formatParts[0].value;
+  const finishAt = moment(tender.finishAt).set("hour", 23).set("minute", 59);
+  const now = moment();
+  const days = finishAt.diff(now, "days");
+  if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
+  if (days === 0) return "closing today";
+  if (days === 1) return "1 day to go";
+  return `${days} days to go`;
 }
 
 function resetFilter() {
