@@ -24,7 +24,7 @@
           class="buttons"
         >
           <button class="button" @click="isShowOfferModal = true">
-            Participate
+            Submit Bid
           </button>
         </div>
       </div>
@@ -36,23 +36,32 @@
           <div v-if="activeItem == 0" class="tender-info-section">
             <h3 class="title is-4">{{ tender.title }}</h3>
             <div :class="['status', tender.status.toLowerCase()]">
-              {{ tender.status.toLowerCase() }}
+              {{ tender.status }}
             </div>
             <div v-if="tender.startAt" class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-calendar"></i>
               </span>
-              <span
-                >{{ moment(tender.startAt).format("YYYY-MM-DD") }} -
-                {{ moment(tender.finishAt).format("YYYY-MM-DD") }}</span
-              >
+              <span>
+                <b>Opening Date: </b>
+                {{ moment(tender.startAt).format("YYYY-MM-DD") }}
+              </span>
+            </div>
+            <div v-if="tender.startAt" class="tender-info-option">
+              <span class="icon">
+                <i class="fa fa-calendar"></i>
+              </span>
+              <span>
+                <b>Closing Date: </b>
+                {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
+              </span>
             </div>
             <div v-if="tender.deadlineAt" class="tender-info-option">
               <span class="icon">
                 <i class="fa fa-calendar"></i>
               </span>
               <span>
-                <b>Estimation deadlines: </b
+                <b>Evaluation Deadline: </b
                 >{{ moment(tender.deadlineAt).format("YYYY-MM-DD") }}</span
               >
             </div>
@@ -78,13 +87,18 @@
                 <i class="fa fa-envelope"></i>
               </span>
               <span v-if="isLoadingUser" class="loader is-loading"></span>
-              <span v-if="!isLoadingUser">{{ user.email }}</span>
+              <span v-if="!isLoadingUser"
+                ><b>Purchaser's Email: </b>{{ user.email }}</span
+              >
             </div>
             <div class="tender-info-option transaction">
               <span class="icon">
                 <i class="fa fa-lock"></i>
               </span>
-              <span>{{ subHash(tender.syncTxId) }}</span>
+              <span
+                ><b>Tender Creation Transaction: </b
+                >{{ subHash(tender.syncTxId) }}</span
+              >
               <a href="#" @click="copyHash(tender.syncTxId)">
                 <span class="icon">
                   <i class="fa fa-copy"></i>
@@ -155,8 +169,8 @@
     </div>
     <div :class="['notification ', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
-      The offer has been successfully created!
-      <nuxt-link :to="{ path: '/account/offers' }">My offers</nuxt-link>
+      Bid Successfully Submitted! View
+      <nuxt-link :to="{ path: '/account/offers' }">My Bids</nuxt-link>
     </div>
     <div v-if="isShowOfferModal" class="offer-modal modal is-active">
       <div class="modal-background" @click="isShowOfferModal = false"></div>
@@ -164,13 +178,13 @@
         <div class="box">
           <ESelect
             v-model:value="offerLot"
-            label="Lot"
+            label="Select a Lot"
             :values="
               Object.assign({}, ...lots.map((v) => ({ [v.id]: v.title })))
             "
           />
-          <EInput v-model:value="offerCost" label="Cost" name="cost" />
-          <EText v-model:value="offerDescription" label="Description" />
+          <EInput v-model:value="offerCost" label="Bid Amount" name="cost" />
+          <EText v-model:value="offerDescription" label="Lot Description" />
           <div class="buttons modal-buttons">
             <button
               class="button apply"
@@ -216,12 +230,7 @@ const isShowOfferModal = ref(false);
 const offerCost = ref("");
 const offerDescription = ref("");
 const offerLot = ref(null);
-const menuItems = [
-  "Information",
-  "Lot information",
-  "Lot criterion",
-  // "Transactions",
-];
+const menuItems = ["Tender Details", "Lot Details", "Lot Evaluation Criterion"];
 
 const isModalFormValid = computed(() => {
   const cost = parseInt(offerCost.value) || 0;

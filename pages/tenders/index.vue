@@ -7,7 +7,7 @@
           <h5 class="title is-5">Filters</h5>
         </div>
         <div class="filter-item">
-          <label class="label">Types</label>
+          <label class="label">Statuses</label>
           <ERadio
             v-model:type="tenderType"
             label="Active"
@@ -17,7 +17,7 @@
           />
           <ERadio
             v-model:type="tenderType"
-            label="Finished"
+            label="Completed"
             name="type"
             value="FINISHED"
             :is-checked="tenderType == 'FINISHED'"
@@ -51,7 +51,7 @@
             </nuxt-link>
             <div class="tender-card-informations">
               <div class="tender-info">
-                Transaction:
+                Tender сreation transaction:
                 <a
                   :href="
                     'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
@@ -160,8 +160,8 @@ function getExpiredDaysText(tender) {
   const days = finishAt.diff(now, "days");
   if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
   if (days === 0) return "closing today";
-  if (days === 1) return "1 day to go";
-  return `${days} days to go`;
+  if (days === 1) return "1 DAY TO GO";
+  return `${days} DAYS TO GO`;
 }
 
 function resetFilter() {

@@ -9,11 +9,11 @@
         >
           <ESelect
             v-model:value="role"
-            label="Role"
+            label="Please select your role"
             :values="{
-              application: 'application',
-              jury_member: 'jury_member',
-              tender_owner: 'tender_owner',
+              tender_owner: 'Purchaser',
+              application: 'Bidder',
+              jury_member: 'Evaluation Panel Member',
             }"
           />
           <button class="button" @click="saveRole">
@@ -25,10 +25,10 @@
           <h3 class="title is-4">Account</h3>
           <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
           <div v-if="store.user.createdAt" class="user-info">
-            <b>Created at:</b> {{ store.user.createdAt }}
+            <b>Account Created On:</b> {{ store.user.createdAt }}
           </div>
           <div v-if="store.user.syncTxId" class="user-info">
-            <b>Token address: </b>
+            <b>Account Creation Transaction: </b>
             <a
               :href="
                 'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +

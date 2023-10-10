@@ -22,13 +22,13 @@
       <div class="column form-container is-8 box">
         <div v-if="numberStep == 0" class="step-container">
           <div class="tender-main-info">
-            <EInput v-model:value="title" label="Tender name" name="title" />
+            <EInput v-model:value="title" label="Tender Title" name="title" />
           </div>
         </div>
         <div v-if="numberStep == 1" class="step-container">
           <div v-for="(l, key) in lots" :key="key" class="lot-info">
-            <EInput v-model:value="l.title" label="Lot title" />
-            <EText v-model:value="l.description" label="Lot description" />
+            <EInput v-model:value="l.title" label="Lot Title" />
+            <EText v-model:value="l.description" label="Lot Description" />
             <a
               v-if="lots.length > 1"
               href="#"
@@ -43,21 +43,29 @@
           </div>
         </div>
         <div v-if="numberStep == 2" class="step-container">
-          <h4 class="title is-4">Lot criterions</h4>
+          <h4 class="title is-4">Lot Evaluation Criterion</h4>
           <div v-for="(c, key) in criterions" :key="key" class="criterion-info">
-            <EInput v-model:value="c.title" label="Title" />
-            <EInput v-model:value="c.name" label="Name" />
+            <EInput v-model:value="c.title" label="Evaluation Title" />
+            <EInput v-model:value="c.name" label="Criterion Name" />
             <ESelect
               v-model:value="c.type"
               label="Type"
               selected="NUMBER"
-              :values="{ NUMBER: 'Number', BOOLEAN: 'Boolean' }"
+              :values="{
+                NUMBER: 'Numerical Criterion',
+                BOOLEAN: 'Yes/No Criterion',
+              }"
             />
             <ESelect
               v-model:value="c.aggType"
-              label="Aggregation type"
+              label="Scoring Method"
               selected="AVG"
-              :values="{ AVG: 'Avg', SUM: 'Sum', MIN: 'Min', MAX: 'Max' }"
+              :values="{
+                AVG: 'Average Scoring',
+                SUM: 'Total Scoring',
+                MIN: 'Lowest Score',
+                MAX: 'Highest Score',
+              }"
             />
           </div>
         </div>
@@ -76,7 +84,7 @@
           v-if="numberStep == 4 && !isPending && !isCreated"
           class="step-container"
         >
-          <label class="label">The deadline for estimation submission</label>
+          <label class="label">Evaluation Deadline</label>
           <VueDatePicker
             v-model="deadlineDate"
             class="range"
@@ -85,7 +93,7 @@
             :min-date="new Date()"
           ></VueDatePicker>
           <div class="jury-email">
-            <label class="label">Jury emails</label>
+            <label class="label">Panel Member Email</label>
             <div
               v-for="(e, key) in juryEmails"
               :key="key"
@@ -144,7 +152,7 @@
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add lot</span>
+            <span>Add New Lot</span>
           </button>
           <button
             v-if="numberStep == 4"
@@ -154,7 +162,7 @@
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add email</span>
+            <span>Add New Email</span>
           </button>
 
           <button
@@ -197,11 +205,11 @@ export default defineComponent({
       isPending: false,
       isCreated: false,
       stepNames: [
-        "Tender information",
-        "Tender lot information",
-        "Lot criterion",
+        "Tender Details",
+        "Lot Details",
+        "Lot Evaluation Criterion",
         "Submission dates",
-        "Contacts",
+        "Evaluation Panel Contacts",
       ],
       emailRegex:
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,

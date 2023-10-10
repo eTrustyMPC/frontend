@@ -3,7 +3,7 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">Winners</h3>
+        <h3 class="title is-4">Winning Bidders</h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
@@ -131,10 +131,9 @@ function getWinnerByLot(lot) {
       .some((r) => offers.map((o) => o.id).includes(r))
   )
     return null;
-  const countEstimation = offers.reduce(
-    (c, o) => c + scoreMap.value[o.id].length,
-    0
-  );
+  const countEstimation = offers
+    .filter((o) => o.id in scoreMap.value)
+    .reduce((c, o) => c + scoreMap.value[o.id].length, 0);
   offers.forEach((offer) => {
     const estimations = scoreMap.value[offer.id];
     if (!estimations) return;
@@ -251,24 +250,6 @@ const { pending } = useFetch(
 <style lang="scss">
 .tenders-list {
   padding: 0 10px 30px 10px;
-
-  .box {
-    transition: 0.3s all;
-
-    h4 {
-      transition: 0.3s all;
-    }
-
-    &:hover {
-      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px #e5c076;
-      background: #e5c076;
-      color: #fff;
-
-      h4 {
-        color: #fff;
-      }
-    }
-  }
 }
 
 .offer-info-column {

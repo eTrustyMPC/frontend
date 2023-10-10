@@ -3,7 +3,7 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">Offers</h3>
+        <h3 class="title is-4">Bids for Evaluation</h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
@@ -17,25 +17,27 @@
             <div class="columns">
               <div class="column is-4">
                 <div class="offer-info">
-                  <b>Tender: </b>
+                  <b>Tender Title: </b>
                   <nuxt-link :to="{ path: `/tenders/${tender.id}` }">{{
                     tender.title
                   }}</nuxt-link>
                 </div>
                 <div class="offer-info">
-                  <b>Lot: </b>
+                  <b>Lot Title: </b>
                   {{ lotsMap[offer.lotId].title }}
                 </div>
                 <div class="offer-info">
-                  <b>Criterion: </b>
+                  <b>Lot Evaluation Criterion: </b>
                   {{ getCriterionByOffer(offer).title }}
                 </div>
               </div>
               <div class="column is-8">
                 <div class="offer-info">
-                  <b>Offer description: </b> {{ offer.description }}
+                  <b>Bid Description: </b> {{ offer.description }}
                 </div>
-                <div class="offer-info"><b>Cost: </b> {{ offer.cost }}</div>
+                <div class="offer-info">
+                  <b>Bid Amount: </b> {{ offer.cost }}
+                </div>
               </div>
             </div>
             <div v-if="recordedVotes.includes(offer.id)" class="offer-info">
@@ -60,7 +62,7 @@
               "
               @click="showEstimationModal(offer)"
             >
-              Estimate
+              Evaluate
             </button>
           </div>
         </div>
@@ -68,7 +70,7 @@
     </div>
     <div :class="['notification ', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
-      Your vote counts
+      Evaluation Submitted
     </div>
     <div v-if="isShowModal" class="offer-modal modal is-active">
       <div class="modal-background" @click="isShowModal = false"></div>
@@ -76,7 +78,7 @@
         <div class="box">
           <EInput
             v-model:value="estimationValue"
-            label="Your estimate"
+            label="Evaluation Input"
             name="estimationValue"
           />
           <div class="buttons modal-buttons">
@@ -85,7 +87,7 @@
               :disabled="!isModalFormValid"
               @click="estimate"
             >
-              Submit estimation
+              Submit Evaluation
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
           </div>

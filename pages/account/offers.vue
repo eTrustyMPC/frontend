@@ -3,18 +3,18 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">Offers</h3>
+        <h3 class="title is-4">Submitted Bids</h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
         <div v-if="!pending" class="offers-list">
           <div v-for="offer in offers" :key="offer" class="box">
             <div class="offer-info">
-              <b>Description: </b> {{ offer.description }}
+              <b>Bid Description: </b> {{ offer.description }}
             </div>
-            <div class="offer-info"><b>Cost: </b> {{ offer.cost }}</div>
+            <div class="offer-info"><b>Bid Amount: </b> {{ offer.cost }}</div>
             <div class="offer-info offer-tender-info">
-              <b>Tender: </b>
+              <b>Tender Title: </b>
               <nuxt-link
                 :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
                 >{{ getTenderByOffer(offer).title }}</nuxt-link

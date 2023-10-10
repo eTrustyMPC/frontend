@@ -8,7 +8,7 @@
           </div>
         </div>
         <div class="column is-9 has-text-centered">
-          Copyright @ 2023 eTrusty. All rights Reserved
+          Copyright © 2023 eTrusty. All rights reserved.
         </div>
         <div class="column is-1"></div>
       </div>

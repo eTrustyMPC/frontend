@@ -68,7 +68,7 @@ export default defineComponent({
       const roleNames = {
         tender_owner: "Purchaser",
         application: "Bidder",
-        jury_member: "Evaluation Committee Member",
+        jury_member: "Evaluation Panel Member",
       };
       return `(${roleNames[this.store.user.role]})`;
     },

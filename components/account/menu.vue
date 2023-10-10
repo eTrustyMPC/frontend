@@ -10,7 +10,7 @@
           <nuxt-link :to="{ path: `/${path}` }">{{ key }}</nuxt-link>
         </li>
         <li>
-          <a href="#" @click="logout">Logout</a>
+          <a href="#" @click="logout">Log Out</a>
         </li>
       </ul>
     </div>
@@ -40,9 +40,10 @@ export default defineComponent({
       if (!this.store.user.role) return menuItems;
       if (userRole === "tender_owner") {
         menuItems["account/tenders"] = "My tenders";
-        menuItems["account/tenders/winners"] = "Tender winners";
+        menuItems["account/tenders/winners"] = "Winning Bidders";
       }
-      if (userRole === "application") menuItems["account/offers"] = "My offers";
+      if (userRole === "application")
+        menuItems["account/offers"] = "Submitted Bids";
       if (userRole === "jury_member")
         menuItems["account/estimation/"] = "Estimation";
       return menuItems;
