@@ -264,24 +264,6 @@ async function estimate() {
 <style lang="scss">
 .tenders-list {
   padding: 0 10px 30px 10px;
-
-  .box {
-    transition: 0.3s all;
-
-    h4 {
-      transition: 0.3s all;
-    }
-
-    &:hover {
-      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px #e5c076;
-      background: #e5c076;
-      color: #fff;
-
-      h4 {
-        color: #fff;
-      }
-    }
-  }
 }
 
 .offer-info {

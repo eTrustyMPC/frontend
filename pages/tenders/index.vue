@@ -68,7 +68,7 @@
             <div class="tender-card-metadata">
               <div class="tender-card-metadata-wrapper">
                 <div :class="['status', tender.status.toLowerCase()]">
-                  {{ tender.status.toLowerCase() }}
+                  {{ tender.status }}
                 </div>
                 <div v-if="getExpiredDaysText(tender)" class="expired-days">
                   {{ getExpiredDaysText(tender) }}
@@ -159,7 +159,7 @@ function getExpiredDaysText(tender) {
   const now = moment();
   const days = finishAt.diff(now, "days");
   if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
-  if (days === 0) return "closing today";
+  if (days === 0) return "CLOSING TODAY";
   if (days === 1) return "1 DAY TO GO";
   return `${days} DAYS TO GO`;
 }
