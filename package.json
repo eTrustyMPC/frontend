@@ -25,6 +25,7 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
+    "@nuxtjs/i18n": "^8.0.0-rc.5",
     "@nuxtjs/supabase": "^1.1.2",
     "@pinia/nuxt": "^0.4.11",
     "@vuepic/vue-datepicker": "^6.0.0",

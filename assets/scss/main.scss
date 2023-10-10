@@ -7,6 +7,7 @@ $input-hover-border-color: rgb(39, 48, 56, 0.5);
 @import "@vuepic/vue-datepicker/dist/main.css";
 @import "./bulma/sass/utilities/_all.sass";
 @import "./bulma/bulma";
+@import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 input:focus {
   outline: none !important;
