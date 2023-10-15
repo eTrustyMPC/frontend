@@ -8,15 +8,45 @@
           <div class="loader is-loading"></div>
         </div>
         <div v-if="!pending" class="tenders-list">
-          <nuxt-link
-            v-for="tender in tenders"
-            :key="tender"
-            class="box"
-            :to="{ path: `/tenders/${tender.id}` }"
-          >
-            <h4 class="title is-4">{{ tender.title }}</h4>
-            <b>Organization: {{ tender.organizationId }}</b>
-          </nuxt-link>
+          <div v-for="tender in tenders" :key="tender" class="box">
+            <nuxt-link :to="{ path: `/tenders/${tender.id}` }">
+              <h4 class="title is-4">{{ tender.title }}</h4>
+            </nuxt-link>
+            <div class="tender-card-informations">
+              <div class="tender-info">
+                Tender сreation transaction:
+                <a
+                  :href="
+                    'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                    tender.syncTxId
+                  "
+                  target="_blank"
+                  >{{ subHash(tender.syncTxId) }}</a
+                >
+              </div>
+              <div class="tender-info">
+                Bid before: {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
+              </div>
+            </div>
+            <div class="tender-card-metadata">
+              <div class="tender-card-metadata-wrapper">
+                <div :class="['status', tender.status.toLowerCase()]">
+                  {{ tender.status }}
+                </div>
+                <div v-if="getExpiredDaysText(tender)" class="expired-days">
+                  {{ getExpiredDaysText(tender) }}
+                </div>
+              </div>
+              <div class="tender-card-metadata-button">
+                <nuxt-link
+                  class="button"
+                  :to="{ path: `/tenders/${tender.id}` }"
+                >
+                  View
+                </nuxt-link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -25,8 +55,10 @@
 
 <script setup lang="ts">
 import { nextTick } from "vue";
+import moment from "moment";
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
+import { subHash, getExpiredDaysText } from "@/utils/common";
 
 const config = useRuntimeConfig();
 
@@ -57,24 +89,6 @@ const { data: tenders, pending } = useFetch(
 
 <style lang="scss">
 .tenders-list {
-  padding: 0 10px 30px 10px;
-
-  .box {
-    transition: 0.3s all;
-
-    h4 {
-      transition: 0.3s all;
-    }
-
-    &:hover {
-      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.1), 0 0 0 1px #e5c076;
-      background: #e5c076;
-      color: #fff;
-
-      h4 {
-        color: #fff;
-      }
-    }
-  }
+  padding: 0;
 }
 </style>

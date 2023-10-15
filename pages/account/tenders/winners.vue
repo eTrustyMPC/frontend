@@ -43,7 +43,7 @@
                   <div v-if="isLoading" class="loader is-loading"></div>
                 </button>
               </div>
-              <div class="column is-8">
+              <div class="offer-info-column column is-8">
                 <div v-if="lot.status === 'DRAFT'" class="offer-info">
                   <b>No winner</b>
                 </div>
@@ -57,12 +57,54 @@
                   <div class="offer-info">
                     <b>Winner price: {{ winner.cost }}</b>
                   </div>
+                  <div class="offer-info">
+                    <b>Winner transaction: </b>
+                    <a
+                      :href="
+                        'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                        winner.syncTxId
+                      "
+                      target="_blank"
+                      >{{ subHash(winner.syncTxId) }}</a
+                    >
+                  </div>
+                  <!-- <button
+                    v-if="winners[0] && lot.status !== 'DRAFT'"
+                    class="button"
+                    @click="otherWinners = winners"
+                  >
+                    Show other winner
+                  </button> -->
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="isShowModal" class="offer-modal modal is-active">
+      <div
+        class="modal-background"
+        @click="
+          isShowModal = false;
+          otherWinners = [];
+        "
+      ></div>
+      <div class="modal-content">
+        <div class="box">
+          <div class="winner-list">
+            {{ otherWinners }}
+          </div>
+        </div>
+      </div>
+      <button
+        class="modal-close is-large"
+        aria-label="close"
+        @click="
+          isShowModal = false;
+          otherWinners = [];
+        "
+      ></button>
     </div>
   </div>
 </template>
@@ -71,6 +113,7 @@
 import { nextTick } from "vue";
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
+import { subHash } from "@/utils/common";
 
 const config = useRuntimeConfig();
 
@@ -83,9 +126,11 @@ const lots = ref([]);
 const tendersMap = ref({});
 const offersMap = ref([]);
 const criterionsMap = ref({});
+const isShowModal = ref(false);
 const scoreMap = ref({});
 const usersMap = ref({});
 const isLoading = ref(false);
+const otherWinners = ref([]);
 const query = JSON.stringify({
   where: {
     ownerId: {
@@ -96,7 +141,7 @@ const query = JSON.stringify({
 
 async function showWinner(lot) {
   isLoading.value = true;
-  const offer = getWinnerByLot(lot);
+  const offer = getWinnersByLot(lot)[0];
   await useFetch(
     () => `${baseURL}/api/lot/selectWinner?offerId=${offer.id}&lotId=${lot.id}`,
     {
@@ -140,6 +185,7 @@ function getWinnerByLot(lot) {
     estimationsOfferMap[offer.id] =
       estimations.reduce((p, s) => p + s.value, 0) / countEstimation;
   });
+
   const winnerOfferId = Object.keys(estimationsOfferMap).reduce((acc, item) =>
     estimationsOfferMap[acc] > estimationsOfferMap[item] ? acc : item
   );

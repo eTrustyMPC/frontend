@@ -103,7 +103,7 @@ import { nextTick, ref } from "vue";
 import moment from "moment";
 import { useUserStore } from "@/stores/user";
 import ERadio from "@/components/form/ERadio.vue";
-import { subHash } from "@/utils/common";
+import { subHash, getExpiredDaysText } from "@/utils/common";
 
 const config = useRuntimeConfig();
 const store = useUserStore();
@@ -152,16 +152,6 @@ function getTenders() {
       });
     },
   });
-}
-
-function getExpiredDaysText(tender) {
-  const finishAt = moment(tender.finishAt).set("hour", 23).set("minute", 59);
-  const now = moment();
-  const days = finishAt.diff(now, "days");
-  if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
-  if (days === 0) return "CLOSING TODAY";
-  if (days === 1) return "1 DAY TO GO";
-  return `${days} DAYS TO GO`;
 }
 
 function resetFilter() {
