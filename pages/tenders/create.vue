@@ -17,6 +17,7 @@
               >
             </li>
           </ul>
+          {{$t("test")}}
         </div>
       </div>
       <div class="column form-container is-8 box">
