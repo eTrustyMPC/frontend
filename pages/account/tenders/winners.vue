@@ -11,7 +11,7 @@
           <div
             v-for="lot in lots"
             :key="lot"
-            :set="(winner = getWinnerByLot(lot))"
+            :set="(winners = getWinnersByLot(lot))"
             class="box"
           >
             <div class="columns">
@@ -34,7 +34,7 @@
                 <!-- isLoading -->
 
                 <button
-                  v-if="winner && lot.status === 'DRAFT'"
+                  v-if="winners && lot.status === 'DRAFT'"
                   :disabled="isLoading"
                   class="button"
                   @click="showWinner(lot)"
@@ -52,29 +52,31 @@
                   class="winner-info-wrapper"
                 >
                   <div class="offer-info">
-                    <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
+                    <b
+                      >Winner email: {{ usersMap[winners[0].ownerId].email }}</b
+                    >
                   </div>
                   <div class="offer-info">
-                    <b>Winner price: {{ winner.cost }}</b>
+                    <b>Winner price: {{ winners[0].cost }}</b>
                   </div>
                   <div class="offer-info">
                     <b>Winner transaction: </b>
                     <a
                       :href="
                         'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
-                        winner.syncTxId
+                        winners[0].syncTxId
                       "
                       target="_blank"
-                      >{{ subHash(winner.syncTxId) }}</a
+                      >{{ subHash(winners[0].syncTxId) }}</a
                     >
                   </div>
-                  <!-- <button
+                  <button
                     v-if="winners[0] && lot.status !== 'DRAFT'"
                     class="button"
-                    @click="otherWinners = winners"
+                    @click="showOtherWinners(lot)"
                   >
-                    Show other winner
-                  </button> -->
+                    Show other winners
+                  </button>
                 </div>
               </div>
             </div>
@@ -93,7 +95,30 @@
       <div class="modal-content">
         <div class="box">
           <div class="winner-list">
-            {{ otherWinners }}
+            <div
+              v-for="(winner, index) in otherWinners"
+              :key="winner"
+              class="winner-wrapper"
+            >
+              <div class="winner-index">{{ index + 1 }}</div>
+              <div class="offer-info">
+                <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
+              </div>
+              <div class="offer-info">
+                <b>Winner price: {{ winner.cost }}</b>
+              </div>
+              <div class="offer-info">
+                <b>Winner transaction: </b>
+                <a
+                  :href="
+                    'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                    winner.syncTxId
+                  "
+                  target="_blank"
+                  >{{ subHash(winner.syncTxId) }}</a
+                >
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -139,6 +164,11 @@ const query = JSON.stringify({
   },
 });
 
+function showOtherWinners(lot) {
+  isShowModal.value = true;
+  otherWinners.value = getWinnersByLot(lot);
+}
+
 async function showWinner(lot) {
   isLoading.value = true;
   const offer = getWinnersByLot(lot)[0];
@@ -166,7 +196,7 @@ function getCriterionByLot(lot) {
   return criterionsMap.value[lot.criterionId];
 }
 
-function getWinnerByLot(lot) {
+function getWinnersByLot(lot) {
   const offers = offersMap.value[lot.id];
   if (!offers) return null;
   const estimationsOfferMap = {};
@@ -186,13 +216,16 @@ function getWinnerByLot(lot) {
       estimations.reduce((p, s) => p + s.value, 0) / countEstimation;
   });
 
-  const winnerOfferId = Object.keys(estimationsOfferMap).reduce((acc, item) =>
-    estimationsOfferMap[acc] > estimationsOfferMap[item] ? acc : item
-  );
+  const estimations = Object.entries(estimationsOfferMap)
+    .sort((x, y) => y[1] - x[1])
+    .map((o) => Number(o[0]));
+  // const winnerOfferId = Object.keys(estimationsOfferMap).reduce((acc, item) =>
+  //   estimationsOfferMap[acc] > estimationsOfferMap[item] ? acc : item
+  // );
 
   return Object.values(offers).filter((o) => {
-    return o.id === Number(winnerOfferId);
-  })[0];
+    return estimations.includes(o.id);
+  });
 }
 
 const { pending } = useFetch(
@@ -296,6 +329,32 @@ const { pending } = useFetch(
 <style lang="scss">
 .tenders-list {
   padding: 0 10px 30px 10px;
+}
+
+.winner-list {
+  .winner-wrapper {
+    box-shadow: 6px 6px 20px -1px rgba(39, 48, 56, 0.25);
+    padding: 10px;
+    margin-bottom: 20px;
+    position: relative;
+
+    .winner-index {
+      position: absolute;
+      border-radius: 0 0 0 10px;
+      background: #f7b452;
+      color: #fff;
+      padding: 5px;
+      line-height: 1;
+      right: 0;
+      top: 0;
+    }
+  }
+
+  .offer-info {
+    a {
+      color: #e5c076;
+    }
+  }
 }
 
 .offer-info-column {

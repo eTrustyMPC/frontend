@@ -20,6 +20,17 @@
                 >{{ getTenderByOffer(offer).title }}</nuxt-link
               >
             </div>
+            <div class="offer-info offer-tender-info">
+              <b>Bid transaction: </b>
+              <a
+                :href="
+                  'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
+                  offer.syncTxId
+                "
+                target="_blank"
+                >{{ subHash(offer.syncTxId) }}</a
+              >
+            </div>
             <a
               href="#"
               class="button delete-button"
@@ -40,6 +51,7 @@
 import { nextTick } from "vue";
 import AccountMenu from "@/components/account/menu.vue";
 import { useUserStore } from "@/stores/user";
+import { subHash } from "@/utils/common";
 
 const config = useRuntimeConfig();
 
