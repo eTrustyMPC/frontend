@@ -7,20 +7,16 @@
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
-        <div class="offers-list">
-          <div
-            v-for="offer in offers"
-            :key="offer"
-            :set="(tender = getTenderByOffer(offer))"
-            class="box"
-          >
+        <div v-if="offers" class="offers-list">
+          <div v-for="offer in offers" :key="offer" class="box">
             <div class="columns">
               <div class="column is-4">
                 <div class="offer-info">
                   <b>Tender Title: </b>
-                  <nuxt-link :to="{ path: `/tenders/${tender.id}` }">{{
-                    tender.title
-                  }}</nuxt-link>
+                  <nuxt-link
+                    :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
+                    >{{ getTenderByOffer(offer).title }}</nuxt-link
+                  >
                 </div>
                 <div class="offer-info">
                   <b>Lot Title: </b>
@@ -47,7 +43,7 @@
             </div>
             <div
               v-if="
-                moment(tender.deadlineAt) < moment() &&
+                moment(getTenderByOffer(offer).deadlineAt) < moment() &&
                 !recordedVotes.includes(offer.id)
               "
               class="offer-info"
@@ -58,7 +54,7 @@
               class="button estimation-button"
               :disabled="
                 recordedVotes.includes(offer.id) ||
-                moment(tender.deadlineAt) < moment()
+                moment(getTenderByOffer(offer).deadlineAt) < moment()
               "
               @click="showEstimationModal(offer)"
             >
