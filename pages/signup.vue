@@ -158,8 +158,11 @@ export default defineComponent({
         this.notificationText = data.error.message;
         this.closeNotification();
       }
-
-      navigateTo("/signin");
+      await this.supabase.auth.signInWithPassword({
+        email: this.email,
+        password: this.password,
+      });
+      navigateTo("/account");
     },
   },
 });

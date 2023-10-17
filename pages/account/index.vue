@@ -53,7 +53,7 @@ export default defineComponent({
   components: { AccountMenu, ESelect },
   data: () => {
     return {
-      role: "application",
+      role: "tender_owner",
       store: useUserStore(),
       isLoading: false,
     };
