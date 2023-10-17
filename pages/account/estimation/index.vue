@@ -72,9 +72,11 @@
       <div class="modal-background" @click="isShowModal = false"></div>
       <div class="modal-content">
         <div class="box">
+          <label class="label evaluation-label">Evaluation Input</label>
+          <span class="is-size-6">Put your evaluation from 1 to 10</span>
           <EInput
             v-model:value="estimationValue"
-            label="Evaluation Input"
+            class="evaluation-input"
             name="estimationValue"
           />
           <div class="buttons modal-buttons">
@@ -117,7 +119,7 @@ const tendersMap = ref({});
 const offers = ref([]);
 const criterionsMap = ref({});
 const recordedVotes = ref([]);
-const estimationValue = ref(null);
+const estimationValue = ref(1);
 const isShowNotification = ref(false);
 const offerValueMap = ref({});
 const isLoading = ref(false);
@@ -133,7 +135,7 @@ const query = JSON.stringify({
 
 const isModalFormValid = computed(() => {
   const value = parseInt(estimationValue.value) || 0;
-  return value > 0;
+  return value >= 1 && value <= 10;
 });
 
 function getTenderByOffer(offer) {
@@ -253,6 +255,7 @@ async function estimate() {
   isLoading.value = false;
   isShowModal.value = false;
   modalOffer.value = null;
+  estimationValue.value = 1;
   setTimeout(() => (isShowNotification.value = false), 5000);
 }
 </script>
@@ -265,6 +268,16 @@ async function estimate() {
 .offer-info {
   a {
     color: #e5c076;
+  }
+}
+
+.evaluation-input {
+  margin-top: 10px;
+}
+
+.label {
+  &.evaluation-label {
+    margin-bottom: 0;
   }
 }
 
