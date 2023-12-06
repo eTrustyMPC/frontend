@@ -1,10 +1,181 @@
 export default {
-  // Header
-  headerTendersLink: "Tenders",
-  createTenderButton: "Create tender",
+  roleNames: {
+    tender_owner: "Purchaser",
+    application: "Bidder",
+    jury_member: "Evaluation Panel Member",
+  },
+  layouts: {
+    appHeader: {
+      tendersLink: "Tenders",
+      createTenderButton: "Create tender",
+    },
+    appFooter: {
+      copyright: "Copyright © 2023 eTrusty. All rights reserved.",
+    },
+  },
+  components: {
+    account: {
+      menu: {
+        itemsMap: {
+          account: "Account",
+          tenders: "My tenders",
+          winners: "Winning Bidders",
+          offers: "Submitted Bids",
+          estimation: "Estimation",
+          settings: "Settings",
+        },
+        logOutButton: "Log Out",
+      },
+    },
+  },
   pages: {
-    CreatePage: {
-      en: '/asd'
-    }
-  }
+    account: {
+      index: {
+        roleLable: "Please select your role",
+        roles: {
+          tender_owner: "Purchaser",
+          application: "Bidder",
+          jury_member: "Evaluation Panel Member",
+        },
+        saveButton: "Save",
+        title: "Account",
+        emailLabel: "E-mail",
+        createdAtLabel: "Account Created On",
+        transactionLabel: "Account Creation Transaction",
+      },
+      offers: {
+        title: "Submitted Bids",
+        offerDescriptionLabel: "Bid Description",
+        offerAmountLabel: "Bid Amount",
+        tenderTitleLable: "Tender Title",
+      },
+      settings: {
+        title: "Settings",
+        lanuageSelectorLabel: "Please select your language",
+      },
+      tenders: {
+        index: {
+          title: "My tenders",
+          organizationLabel: "Organization",
+        },
+        winners: {
+          title: "Winning Bidders",
+          tenderTitleLable: "Tender",
+          lotTitleLable: "Lot",
+          criterionTitleLable: "Criterion",
+          showWinnerButton: "Show winner",
+          noWinnerLabel: "No winner",
+          winnerEmailLabel: "Winner email",
+          winnerPriceLabel: "Winner price",
+        },
+      },
+      estimation: {
+        index: {
+          title: "Bids for Evaluation",
+          tenderTitleLable: "Tender",
+          lotTitleLable: "Lot",
+          criterionTitleLable: "Lot Evaluation Criterion",
+          offerDescriptionLabel: "Bid Description",
+          offerAmountLabel: "Bid Amount",
+          voteLabel: "Your vote",
+          voteDescriptionLabel: "Your vote has already been counted.",
+          voteTimeLabel: "Voting time has expired",
+          evaluateButton: "Evaluate",
+          modalTitle: "Evaluation Submitted",
+          modalInputLabel: "Evaluation Input",
+          modalButton: "Submit Evaluation",
+        },
+      },
+    },
+    signup: {
+      title: "Sign Up",
+      emailLabel: "E-mail",
+      passwordLabel: "Password",
+      confirmLabel: "Confirm password",
+      createButton: "Create",
+      discordLabel: "with Discord",
+      signinButton: "Sign In",
+      alreadyLabel: "Already have an account?",
+      invalidPasswordNotification:
+        "Your password must contain:\n- At least one digit\n- At least one lowercase character\n- At least one uppercase character\n- At least one special character\n- At least 8 characters in length",
+      invalidEmailNotification: "Enter your e-mail!",
+      invalidConfirmPasswordNotification:
+        "The password confirmation does not match!",
+    },
+    signin: {
+      emailLabel: "E-mail",
+      title: "Sign In",
+      passwordLabel: "Password",
+      loginButton: "Login",
+      discordLabel: "with Discord",
+      signupButton: "Sign Up",
+      linkText: "No account yet?",
+      invalidDataNotification: "Enter your e-mail and password!",
+    },
+    tenders: {
+      id: {
+        bidButton: "Submit Bid",
+        openingDateLabel: "Opening Date",
+        closingDateLabel: "Closing Date",
+        deadlineLabel: "Evaluation Deadline",
+        emailLabel: "Purchaser's Email",
+        transactionLabel: "Tender Creation Transaction",
+        selectLotLable: "Select a Lot",
+        bidAmountLabel: "Bid Amount",
+        lotDescriptionLabel: "Lot Description",
+        applyButton: "Apply",
+        successNotification: "Bid Successfully Submitted! View",
+        myBidsButton: "My Bids",
+        menu: ["Tender Details", "Lot Details", "Lot Evaluation Criterion"],
+      },
+      index: {
+        title: "Tenders",
+        filtersTitle: "Filters",
+        statusesTitle: "Statuses",
+        resetButton: "Reset",
+        applyButton: "Apply",
+        transactionInfoLabel: "Tender сreation transaction",
+        bidDateLabel: "Bid before",
+        viewButton: "View",
+        viewMoreButton: "View more",
+        labelClosingToday: "CLOSING TODAY",
+        labelClosingOneDay: "1 DAY TO GO",
+      },
+      create: {
+        titleLabel: "Tender Title",
+        lotTitleLabel: "Lot Title",
+        lotDescriptionLabel: "Lot Description",
+        criterionTitle: "Lot Evaluation Criterion",
+        criterionTitleLabel: "Evaluation Title",
+        criterionNameLabel: "Criterion Name",
+        criterionTypeLabel: "Type",
+        scoringMethodLabel: "Scoring Method",
+        criterionTypes: {
+          NUMBER: "Numerical Criterion",
+          BOOLEAN: "Yes/No Criterion",
+        },
+        scoringMethods: {
+          AVG: "Average Scoring",
+          SUM: "Total Scoring",
+          MIN: "Lowest Score",
+          MAX: "Highest Score",
+        },
+        periodTtitle: "Submission dates",
+        deadlineTtitle: "Evaluation Deadline",
+        emailTitle: "Panel Member Email",
+        backButton: "Back",
+        nextButton: "Next",
+        addNewLotButton: "Add New Lot",
+        addNewEmailButton: "Add New Email",
+        createButton: "Create",
+        stepMenu: [
+          "Tender Details",
+          "Lot Details",
+          "Lot Evaluation Criterion",
+          "Submission dates",
+          "Evaluation Panel Contacts",
+        ],
+      },
+    },
+  },
 };

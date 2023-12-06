@@ -5,11 +5,19 @@
         <div class="column is-4"></div>
         <div class="column is-4"></div>
         <div class="column is-3">
-          <h4 class="title is-4 has-text-centered">Sign In</h4>
-          <EInput v-model:value="email" label="E-mail" name="email" />
+          <h4 class="title is-4 has-text-centered">
+            {{ $t("pages.signin.title") }}
+          </h4>
+          <EInput
+            v-model:value="email"
+            :label="$t('pages.signin.emailLabel')"
+            name="email"
+          />
           <div class="password">
             <div class="input-field field">
-              <label class="label">Password</label>
+              <label class="label">{{
+                $t("pages.signin.passwordLabel")
+              }}</label>
               <div class="control">
                 <input
                   v-model="password"
@@ -30,19 +38,21 @@
               <span class="icon">
                 <i class="fa fa-unlock"></i>
               </span>
-              <span>Login</span>
+              <span>{{ $t("pages.signin.loginButton") }}</span>
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
             <button class="button discord" @click="signInWithOAuth">
               <span class="icon">
                 <i class="fa-brands fa-discord"></i>
               </span>
-              <span>with Discord</span>
+              <span>{{ $t("pages.signin.discordLabel") }}</span>
             </button>
           </div>
           <span class="signup-link">
-            No account yet?
-            <nuxt-link :to="{ path: `/signup` }">Sign Up</nuxt-link>
+            {{ $t("pages.signin.linkText") }}
+            <nuxt-link :to="{ path: `/signup` }">{{
+              $t("pages.signin.signupButton")
+            }}</nuxt-link>
           </span>
         </div>
       </div>
@@ -91,7 +101,7 @@ export default defineComponent({
     async signin() {
       if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email) && this.password === "") {
         this.isShowNotification = true;
-        this.notificationText = "Enter your e-mail and password!";
+        this.notificationText = this.$t("pages.signin.invalidDataNotification");
         this.closeNotification();
         return;
       }

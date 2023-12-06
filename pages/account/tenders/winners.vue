@@ -3,7 +3,9 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">Winning Bidders</h3>
+        <h3 class="title is-4">
+          {{ $t("pages.account.tenders.winners.title") }}
+        </h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
@@ -17,18 +19,26 @@
             <div class="columns">
               <div class="offer-info-column column is-4">
                 <div class="offer-info">
-                  <b>Tender: </b>
+                  <b
+                    >{{ $t("pages.account.tenders.winners.tenderTitleLable") }}:
+                  </b>
                   <nuxt-link
                     :to="{ path: `/tenders/${getTenderByLot(lot).id}` }"
                     >{{ getTenderByLot(lot).title }}</nuxt-link
                   >
                 </div>
                 <div class="offer-info">
-                  <b>Lot: </b>
+                  <b
+                    >{{ $t("pages.account.tenders.winners.lotTitleLable") }}:
+                  </b>
                   {{ lot.title }}
                 </div>
                 <div class="offer-info">
-                  <b>Criterion: </b>
+                  <b
+                    >{{
+                      $t("pages.account.tenders.winners.criterionTitleLable")
+                    }}:
+                  </b>
                   {{ getCriterionByLot(lot).title }}
                 </div>
                 <!-- isLoading -->
@@ -39,23 +49,31 @@
                   class="button"
                   @click="showWinner(lot)"
                 >
-                  Show winner
+                  {{ $t("pages.account.tenders.winners.showWinnerButton") }}
                   <div v-if="isLoading" class="loader is-loading"></div>
                 </button>
               </div>
               <div class="column is-8">
                 <div v-if="lot.status === 'DRAFT'" class="offer-info">
-                  <b>No winner</b>
+                  <b>{{ $t("pages.account.tenders.winners.noWinnerLabel") }}</b>
                 </div>
                 <div
                   v-if="lot.status === 'FINISHED'"
                   class="winner-info-wrapper"
                 >
                   <div class="offer-info">
-                    <b>Winner email: {{ usersMap[winner.ownerId].email }}</b>
+                    <b
+                      >{{
+                        $t("pages.account.tenders.winners.winnerEmailLabel")
+                      }}: {{ usersMap[winner.ownerId].email }}</b
+                    >
                   </div>
                   <div class="offer-info">
-                    <b>Winner price: {{ winner.cost }}</b>
+                    <b
+                      >{{
+                        $t("pages.account.tenders.winners.winnerPriceLabel")
+                      }}: {{ winner.cost }}</b
+                    >
                   </div>
                 </div>
               </div>

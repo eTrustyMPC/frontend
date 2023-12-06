@@ -3,7 +3,9 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">Bids for Evaluation</h3>
+        <h3 class="title is-4">
+          {{ $t("pages.account.estimation.index.title") }}
+        </h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
@@ -17,33 +19,56 @@
             <div class="columns">
               <div class="column is-4">
                 <div class="offer-info">
-                  <b>Tender Title: </b>
+                  <b
+                    >{{
+                      $t("pages.account.estimation.index.tenderTitleLable")
+                    }}:
+                  </b>
                   <nuxt-link :to="{ path: `/tenders/${tender.id}` }">{{
                     tender.title
                   }}</nuxt-link>
                 </div>
                 <div class="offer-info">
-                  <b>Lot Title: </b>
+                  <b
+                    >{{ $t("pages.account.estimation.index.lotTitleLable") }}:
+                  </b>
                   {{ lotsMap[offer.lotId].title }}
                 </div>
                 <div class="offer-info">
-                  <b>Lot Evaluation Criterion: </b>
+                  <b
+                    >{{
+                      $t("pages.account.estimation.index.criterionTitleLable")
+                    }}:
+                  </b>
                   {{ getCriterionByOffer(offer).title }}
                 </div>
               </div>
               <div class="column is-8">
                 <div class="offer-info">
-                  <b>Bid Description: </b> {{ offer.description }}
+                  <b
+                    >{{
+                      $t(
+                        "pages.account.estimation.index.offerDescriptionLabel"
+                      )
+                    }}:
+                  </b>
+                  {{ offer.description }}
                 </div>
                 <div class="offer-info">
-                  <b>Bid Amount: </b> {{ offer.cost }}
+                  <b
+                    >{{
+                      $t("pages.account.estimation.index.offerAmountLabel")
+                    }}:
+                  </b>
+                  {{ offer.cost }}
                 </div>
               </div>
             </div>
             <div v-if="recordedVotes.includes(offer.id)" class="offer-info">
-              Your vote has already been counted.
+              {{ $t("pages.account.estimation.index.voteDescriptionLabel") }}
               <br />
-              Your vote: <b>{{ offerValueMap[offer.id] }}</b>
+              {{ $t("pages.account.estimation.index.voteLabel") }}:
+              <b>{{ offerValueMap[offer.id] }}</b>
             </div>
             <div
               v-if="
@@ -52,7 +77,7 @@
               "
               class="offer-info"
             >
-              Voting time has expired
+              {{ $t("pages.account.estimation.index.voteTimeLabel") }}
             </div>
             <button
               class="button estimation-button"
@@ -62,7 +87,7 @@
               "
               @click="showEstimationModal(offer)"
             >
-              Evaluate
+              {{ $t("pages.account.estimation.index.evaluateButton") }}
             </button>
           </div>
         </div>
@@ -70,7 +95,7 @@
     </div>
     <div :class="['notification ', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
-      Evaluation Submitted
+      {{ $t("pages.account.estimation.index.modalTitle") }}
     </div>
     <div v-if="isShowModal" class="offer-modal modal is-active">
       <div class="modal-background" @click="isShowModal = false"></div>
@@ -78,7 +103,7 @@
         <div class="box">
           <EInput
             v-model:value="estimationValue"
-            label="Evaluation Input"
+            :label="$t('pages.account.estimation.index.modalInputLabel')"
             name="estimationValue"
           />
           <div class="buttons modal-buttons">
@@ -87,7 +112,7 @@
               :disabled="!isModalFormValid"
               @click="estimate"
             >
-              Submit Evaluation
+              {{ $t("pages.account.estimation.index.modalButton") }}
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
           </div>

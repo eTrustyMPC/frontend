@@ -1,13 +1,17 @@
 <template>
   <div class="container wrapper">
-    <h3 class="page-title title is-4">Tenders</h3>
+    <h3 class="page-title title is-4">{{ $t("pages.tenders.index.title") }}</h3>
     <div class="columns tenders-columns">
       <div class="column box tenders-filter">
         <div class="filter-title">
-          <h5 class="title is-5">Filters</h5>
+          <h5 class="title is-5">
+            {{ $t("pages.tenders.index.filtersTitle") }}
+          </h5>
         </div>
         <div class="filter-item">
-          <label class="label">Statuses</label>
+          <label class="label">{{
+            $t("pages.tenders.index.statusesTitle")
+          }}</label>
           <ERadio
             v-model:type="tenderType"
             label="Active"
@@ -38,8 +42,12 @@
           />
         </div>
         <div class="buttons is-centered">
-          <button class="button reset" @click="resetFilter">Reset</button>
-          <button class="button apply" @click="applyFilter">Apply</button>
+          <button class="button reset" @click="resetFilter">
+            {{ $t("pages.tenders.index.resetButton") }}
+          </button>
+          <button class="button apply" @click="applyFilter">
+            {{ $t("pages.tenders.index.applyButton") }}
+          </button>
         </div>
       </div>
       <div class="column is-8 box tenders-container">
@@ -51,7 +59,7 @@
             </nuxt-link>
             <div class="tender-card-informations">
               <div class="tender-info">
-                Tender сreation transaction:
+                {{ $t("pages.tenders.index.transactionInfoLabel") }}:
                 <a
                   :href="
                     'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +
@@ -62,7 +70,8 @@
                 >
               </div>
               <div class="tender-info">
-                Bid before: {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
+                {{ $t("pages.tenders.index.bidDateLabel") }}:
+                {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
               </div>
             </div>
             <div class="tender-card-metadata">
@@ -79,14 +88,14 @@
                   class="button"
                   :to="{ path: `/tenders/${tender.id}` }"
                 >
-                  View
+                  {{ $t("pages.tenders.index.viewButton") }}
                 </nuxt-link>
               </div>
             </div>
           </div>
           <div v-if="isShowButtonViewMore" class="buttons is-centered">
             <button class="button add-more-tenders" @click="loadTenders">
-              View more
+              {{ $t("pages.tenders.index.viewMoreButton") }}
             </button>
           </div>
         </div>
@@ -101,12 +110,14 @@
 <script setup lang="ts">
 import { nextTick, ref } from "vue";
 import moment from "moment";
+import { useI18n } from "vue-i18n";
 import { useUserStore } from "@/stores/user";
 import ERadio from "@/components/form/ERadio.vue";
 import { subHash } from "@/utils/common";
 
 const config = useRuntimeConfig();
 const store = useUserStore();
+const { tm } = useI18n({ useScope: "global" });
 
 await nextTick();
 
@@ -159,8 +170,8 @@ function getExpiredDaysText(tender) {
   const now = moment();
   const days = finishAt.diff(now, "days");
   if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
-  if (days === 0) return "CLOSING TODAY";
-  if (days === 1) return "1 DAY TO GO";
+  if (days === 0) return tm("pages.tenders.index.labelClosingToday");
+  if (days === 1) return tm("pages.tenders.index.labelClosingOneDay");
   return `${days} DAYS TO GO`;
 }
 

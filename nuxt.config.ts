@@ -26,11 +26,8 @@ export default defineNuxtConfig({
       ],
     },
   },
-  i18n: {
-    vueI18n: "./i18n.config.ts", // if you are using custom path, default
-  },
   router: { middleware: ["auth"] },
-  modules: ["@pinia/nuxt", "@nuxtjs/supabase", "@nuxtjs/i18n"],
+  modules: ["@pinia/nuxt", "@nuxtjs/supabase"],
   runtimeConfig: {
     public: {
       baseURL: process.env.BASE_URL || "http://localhost:5000",

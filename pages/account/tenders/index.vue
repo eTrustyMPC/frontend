@@ -3,7 +3,9 @@
     <div class="columns">
       <AccountMenu />
       <div class="column is-8 box">
-        <h3 class="title is-4">My tenders</h3>
+        <h3 class="title is-4">
+          {{ $t("pages.account.tenders.index.title") }}
+        </h3>
         <div v-if="pending" class="loader-wrapper is-active">
           <div class="loader is-loading"></div>
         </div>
@@ -15,7 +17,10 @@
             :to="{ path: `/tenders/${tender.id}` }"
           >
             <h4 class="title is-4">{{ tender.title }}</h4>
-            <b>Organization: {{ tender.organizationId }}</b>
+            <b
+              >{{ $t("pages.account.tenders.index.organizationLabel") }}:
+              {{ tender.organizationId }}</b
+            >
           </nuxt-link>
         </div>
       </div>

@@ -13,7 +13,7 @@
           <ul class="main-menu">
             <li>
               <nuxt-link active-class="active" :to="{ path: '/tenders' }">{{
-                $t("headerTendersLink")
+                $t("layouts.appHeader.tendersLink")
               }}</nuxt-link>
             </li>
             <!-- <li>
@@ -33,12 +33,13 @@
               <span class="icon">
                 <i class="fa fa-business-time"></i>
               </span>
-              <span>{{ $t("createTenderButton") }}</span>
+              <span>{{ $t("layouts.appHeader.createTenderButton") }}</span>
             </nuxt-link>
             <nuxt-link class="button user-account" :to="{ path: '/account' }">
               <span class="icon">
                 <i class="fa fa-user"></i>
               </span>
+
               <span>{{ store.user.email }} {{ getRole }}</span>
             </nuxt-link>
           </div>
@@ -62,7 +63,6 @@ export default defineComponent({
   setup() {
     return {
       store: useUserStore(),
-      switchLocale: useSwitchLocalePath(),
     };
   },
   data: () => {
@@ -72,9 +72,9 @@ export default defineComponent({
     getRole() {
       if (!this.store.user.role) return "";
       const roleNames = {
-        tender_owner: "Purchaser",
-        application: "Bidder",
-        jury_member: "Evaluation Panel Member",
+        tender_owner: this.$t("roleNames.tender_owner"),
+        application: this.$t("roleNames.application"),
+        jury_member: this.$t("roleNames.jury_member"),
       };
       return `(${roleNames[this.store.user.role]})`;
     },
