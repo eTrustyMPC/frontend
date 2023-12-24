@@ -12,9 +12,9 @@
         <div class="column is-3 is-vcentered">
           <ul class="main-menu">
             <li>
-              <nuxt-link active-class="active" :to="{ path: '/tenders' }"
-                >Tenders</nuxt-link
-              >
+              <nuxt-link active-class="active" :to="{ path: '/tenders' }">{{
+                $t("layouts.appHeader.tendersLink")
+              }}</nuxt-link>
             </li>
             <!-- <li>
               <nuxt-link active-class="active" :to="{ path: '/transactions' }"
@@ -33,14 +33,20 @@
               <span class="icon">
                 <i class="fa fa-business-time"></i>
               </span>
-              <span>Create tender</span>
+              <span>{{ $t("layouts.appHeader.createTenderButton") }}</span>
             </nuxt-link>
             <nuxt-link class="button user-account" :to="{ path: '/account' }">
               <span class="icon">
                 <i class="fa fa-user"></i>
               </span>
+
               <span>{{ store.user.email }} {{ getRole }}</span>
             </nuxt-link>
+          </div>
+          <div class="select-language">
+            <div class="active-language">
+              <span class="fi fi-gr fis"></span>
+            </div>
           </div>
         </div>
       </div>
@@ -66,9 +72,9 @@ export default defineComponent({
     getRole() {
       if (!this.store.user.role) return "";
       const roleNames = {
-        tender_owner: "Purchaser",
-        application: "Bidder",
-        jury_member: "Evaluation Panel Member",
+        tender_owner: this.$t("roleNames.tender_owner"),
+        application: this.$t("roleNames.application"),
+        jury_member: this.$t("roleNames.jury_member"),
       };
       return `(${roleNames[this.store.user.role]})`;
     },

@@ -32,7 +32,7 @@ export function getExpiredDaysText(tender) {
   const now = moment();
   const days = finishAt.diff(now, "days");
   if (isNaN(days) || (days <= 0 && now.date() !== finishAt.date())) return;
-  if (days === 0) return "CLOSING TODAY";
-  if (days === 1) return "1 DAY TO GO";
+  if (days === 0) return tm("pages.tenders.index.labelClosingToday");
+  if (days === 1) return tm("pages.tenders.index.labelClosingOneDay");
   return `${days} DAYS TO GO`;
 }

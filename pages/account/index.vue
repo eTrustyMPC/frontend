@@ -9,26 +9,26 @@
         >
           <ESelect
             v-model:value="role"
-            label="Please select your role"
-            :values="{
-              tender_owner: 'Purchaser',
-              application: 'Bidder',
-              jury_member: 'Evaluation Panel Member',
-            }"
+            :label="$t('pages.account.index.roleLable')"
+            :values="$tm('pages.account.index.roles')"
           />
           <button class="button" @click="saveRole">
-            <span>Save</span>
+            <span>{{ $t("pages.account.index.saveButton") }}</span>
             <div v-if="isLoading" class="loader is-loading"></div>
           </button>
         </div>
         <div v-if="store.user && store.user.role" class="account-wrapper">
-          <h3 class="title is-4">Account</h3>
-          <div class="user-info"><b>E-mail:</b> {{ store.user.email }}</div>
+          <h3 class="title is-4">{{ $t("pages.account.index.title") }}</h3>
+          <div class="user-info">
+            <b>{{ $t("pages.account.index.emailLabel") }}:</b>
+            {{ store.user.email }}
+          </div>
           <div v-if="store.user.createdAt" class="user-info">
-            <b>Account Created On:</b> {{ store.user.createdAt }}
+            <b>{{ $t("pages.account.index.createdAtLabel") }}:</b>
+            {{ store.user.createdAt }}
           </div>
           <div v-if="store.user.syncTxId" class="user-info">
-            <b>Account Creation Transaction: </b>
+            <b>{{ $t("pages.account.index.transactionLabel") }}: </b>
             <a
               :href="
                 'https://testnet.partisiablockchain.com/info/transaction/Shard1/' +

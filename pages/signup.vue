@@ -5,11 +5,19 @@
         <div class="column is-4"></div>
         <div class="column is-4"></div>
         <div class="column is-3">
-          <h4 class="title is-4 has-text-centered">Sign Up</h4>
-          <EInput v-model:value="email" label="E-mail" name="email" />
+          <h4 class="title is-4 has-text-centered">
+            {{ $t("pages.signup.title") }}
+          </h4>
+          <EInput
+            v-model:value="email"
+            :label="$t('pages.signup.emailLabel')"
+            name="email"
+          />
           <div class="password">
             <div class="input-field field">
-              <label class="label">Password</label>
+              <label class="label">{{
+                $t("pages.signup.passwordLabel")
+              }}</label>
               <div class="control">
                 <input
                   v-model="password"
@@ -27,7 +35,7 @@
           </div>
           <div class="password">
             <div class="input-field field">
-              <label class="label">Confirm password</label>
+              <label class="label">{{ $t("pages.signup.confirmLabel") }}</label>
               <div class="control">
                 <input
                   v-model="confirm_password"
@@ -54,19 +62,21 @@
               <span class="icon">
                 <i class="fa fa-unlock"></i>
               </span>
-              <span>Create</span>
+              <span>{{ $t("pages.signup.createButton") }}</span>
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
             <button class="button discord" @click="signInWithOAuth">
               <span class="icon">
                 <i class="fa-brands fa-discord"></i>
               </span>
-              <span>with Discord</span>
+              <span>{{ $t("pages.signup.discordLabel") }}</span>
             </button>
           </div>
           <span class="signup-link">
-            Already have an account?
-            <nuxt-link :to="{ path: `/signin` }">Sign In</nuxt-link>
+            {{ $t("pages.signup.alreadyLabel") }}
+            <nuxt-link :to="{ path: `/signin` }">{{
+              $t("pages.signup.signinButton")
+            }}</nuxt-link>
           </span>
         </div>
       </div>
@@ -118,21 +128,26 @@ export default defineComponent({
     async signup() {
       if (!this.passwordRegExp.test(this.password)) {
         this.isShowNotification = true;
-        this.notificationText =
-          "Your password must contain:\n- At least one digit\n- At least one lowercase character\n- At least one uppercase character\n- At least one special character\n- At least 8 characters in length";
+        this.notificationText = this.$t(
+          "pages.signup.invalidPasswordNotification"
+        );
         this.closeNotification();
         return;
       }
       if (!/^[^@]+@\w+(\.\w+)+\w$/.test(this.email)) {
         this.isShowNotification = true;
-        this.notificationText = "Enter your e-mail!";
+        this.notificationText = this.$t(
+          "pages.signup.invalidEmailNotification"
+        );
         this.closeNotification();
         return;
       }
 
       if (this.password !== this.confirm_password) {
         this.isShowNotification = true;
-        this.notificationText = "The password confirmation does not match!";
+        this.notificationText = this.$t(
+          "pages.signup.invalidConfirmPasswordNotification"
+        );
         this.closeNotification();
         return;
       }

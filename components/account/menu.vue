@@ -10,7 +10,9 @@
           <nuxt-link :to="{ path: `/${path}` }">{{ key }}</nuxt-link>
         </li>
         <li>
-          <a href="#" @click="logout">Log Out</a>
+          <a href="#" @click="logout">{{
+            $t("components.account.menu.logOutButton")
+          }}</a>
         </li>
       </ul>
     </div>
@@ -33,19 +35,20 @@ export default defineComponent({
   computed: {
     getMenuItems() {
       const userRole = this.store.user.role;
-
+      const localePath = "components.account.menu.itemsMap";
       const menuItems = {
-        account: "Account",
+        account: this.$t(`${localePath}.account`),
       };
       if (!this.store.user.role) return menuItems;
       if (userRole === "tender_owner") {
-        menuItems["account/tenders"] = "My tenders";
-        menuItems["account/tenders/winners"] = "Winning Bidders";
+        menuItems["account/tenders"] = this.$t(`${localePath}.tenders`);
+        menuItems["account/tenders/winners"] = this.$t(`${localePath}.winners`);
       }
       if (userRole === "application")
-        menuItems["account/offers"] = "Submitted Bids";
+        menuItems["account/offers"] = this.$t(`${localePath}.offers`);
       if (userRole === "jury_member")
-        menuItems["account/estimation/"] = "Estimation";
+        menuItems["account/estimation/"] = this.$t(`${localePath}.estimation`);
+      menuItems["account/settings"] = this.$t(`${localePath}.settings`);
       return menuItems;
     },
   },

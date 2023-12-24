@@ -24,7 +24,7 @@
           class="buttons"
         >
           <button class="button" @click="isShowOfferModal = true">
-            Submit Bid
+            {{ $t("pages.tenders.id.bidButton") }}
           </button>
         </div>
       </div>
@@ -43,7 +43,7 @@
                 <i class="fa fa-calendar"></i>
               </span>
               <span>
-                <b>Opening Date: </b>
+                <b>{{ $t("pages.tenders.id.openingDateLabel") }}: </b>
                 {{ moment(tender.startAt).format("YYYY-MM-DD") }}
               </span>
             </div>
@@ -52,7 +52,7 @@
                 <i class="fa fa-calendar"></i>
               </span>
               <span>
-                <b>Closing Date: </b>
+                <b>{{ $t("pages.tenders.id.closingDateLabel") }}: </b>
                 {{ moment(tender.finishAt).format("YYYY-MM-DD") }}
               </span>
             </div>
@@ -61,7 +61,7 @@
                 <i class="fa fa-calendar"></i>
               </span>
               <span>
-                <b>Evaluation Deadline: </b
+                <b>{{ $t("pages.tenders.id.deadlineLabel") }}: </b
                 >{{ moment(tender.deadlineAt).format("YYYY-MM-DD") }}</span
               >
             </div>
@@ -88,7 +88,8 @@
               </span>
               <span v-if="isLoadingUser" class="loader is-loading"></span>
               <span v-if="!isLoadingUser"
-                ><b>Purchaser's Email: </b>{{ user.email }}</span
+                ><b>{{ $t("pages.tenders.id.emailLabel") }}: </b
+                >{{ user.email }}</span
               >
             </div>
             <div class="tender-info-option transaction">
@@ -96,7 +97,7 @@
                 <i class="fa fa-lock"></i>
               </span>
               <span
-                ><b>Tender Creation Transaction: </b
+                ><b>{{ $t("pages.tenders.id.transactionLabel") }}: </b
                 >{{ subHash(tender.syncTxId) }}</span
               >
               <a href="#" @click="copyHash(tender.syncTxId)">
@@ -169,8 +170,10 @@
     </div>
     <div :class="['notification ', isShowNotification ? 'is-active' : '']">
       <button class="delete" @click="isShowNotification = false"></button>
-      Bid Successfully Submitted! View
-      <nuxt-link :to="{ path: '/account/offers' }">My Bids</nuxt-link>
+      {{ $t("pages.tenders.id.successNotification") }}
+      <nuxt-link :to="{ path: '/account/offers' }">{{
+        $t("pages.tenders.id.myBidsButton")
+      }}</nuxt-link>
     </div>
     <div v-if="isShowOfferModal" class="offer-modal modal is-active">
       <div class="modal-background" @click="isShowOfferModal = false"></div>
@@ -178,20 +181,27 @@
         <div class="box">
           <ESelect
             v-model:value="offerLot"
-            label="Select a Lot"
+            :label="$t('pages.tenders.id.selectLotLable')"
             :values="
               Object.assign({}, ...lots.map((v) => ({ [v.id]: v.title })))
             "
           />
-          <EInput v-model:value="offerCost" label="Bid Amount" name="cost" />
-          <EText v-model:value="offerDescription" label="Lot Description" />
+          <EInput
+            v-model:value="offerCost"
+            :label="$t('pages.tenders.id.bidAmountLabel')"
+            name="cost"
+          />
+          <EText
+            v-model:value="offerDescription"
+            :label="$t('pages.tenders.id.lotDescriptionLabel')"
+          />
           <div class="buttons modal-buttons">
             <button
               class="button apply"
               :disabled="!isModalFormValid"
               @click="createOffer"
             >
-              Apply
+              {{ $t("pages.tenders.id.applyButton") }}
               <div v-if="isLoading" class="loader is-loading"></div>
             </button>
           </div>
@@ -208,6 +218,7 @@
 
 <script setup lang="ts">
 import { nextTick, ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import moment from "moment";
 import { subHash } from "@/utils/common";
 import { useUserStore } from "@/stores/user";
@@ -218,6 +229,7 @@ import ESelect from "@/components/form/ESelect.vue";
 const route = useRoute();
 const config = useRuntimeConfig();
 const store = useUserStore();
+const { tm } = useI18n({ useScope: "global" });
 await nextTick();
 
 const isNotification = ref(false);
@@ -230,7 +242,7 @@ const isShowOfferModal = ref(false);
 const offerCost = ref("");
 const offerDescription = ref("");
 const offerLot = ref(null);
-const menuItems = ["Tender Details", "Lot Details", "Lot Evaluation Criterion"];
+const menuItems = tm("pages.tenders.id.menu");
 
 const isModalFormValid = computed(() => {
   const cost = parseInt(offerCost.value) || 0;

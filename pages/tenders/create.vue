@@ -5,7 +5,7 @@
         <div class="content steps-menu">
           <ul>
             <li
-              v-for="(name, index) in stepNames"
+              v-for="(name, index) in $tm('pages.tenders.create.stepMenu')"
               :key="name"
               :class="numberStep == index ? 'is-active' : ''"
             >
@@ -22,13 +22,23 @@
       <div class="column form-container is-8 box">
         <div v-if="numberStep == 0" class="step-container">
           <div class="tender-main-info">
-            <EInput v-model:value="title" label="Tender Title" name="title" />
+            <EInput
+              v-model:value="title"
+              :label="$t('pages.tenders.create.titleLabel')"
+              name="title"
+            />
           </div>
         </div>
         <div v-if="numberStep == 1" class="step-container">
           <div v-for="(l, key) in lots" :key="key" class="lot-info">
-            <EInput v-model:value="l.title" label="Lot Title" />
-            <EText v-model:value="l.description" label="Lot Description" />
+            <EInput
+              v-model:value="l.title"
+              :label="$t('pages.tenders.create.lotTitleLabel')"
+            />
+            <EText
+              v-model:value="l.description"
+              :label="$t('pages.tenders.create.lotDescriptionLabel')"
+            />
             <a
               v-if="lots.length > 1"
               href="#"
@@ -43,34 +53,36 @@
           </div>
         </div>
         <div v-if="numberStep == 2" class="step-container">
-          <h4 class="title is-4">Lot Evaluation Criterion</h4>
+          <h4 class="title is-4">
+            {{ $t("pages.tenders.create.criterionTitle") }}
+          </h4>
           <div v-for="(c, key) in criterions" :key="key" class="criterion-info">
-            <EInput v-model:value="c.title" label="Evaluation Title" />
-            <EInput v-model:value="c.name" label="Criterion Name" />
+            <EInput
+              v-model:value="c.title"
+              :label="$t('pages.tenders.create.criterionTitleLabel')"
+            />
+            <EInput
+              v-model:value="c.name"
+              :label="$t('pages.tenders.create.criterionNameLabel')"
+            />
             <ESelect
               v-model:value="c.type"
-              label="Type"
+              :label="$t('pages.tenders.create.criterionTypeLabel')"
               selected="NUMBER"
-              :values="{
-                NUMBER: 'Numerical Criterion',
-                BOOLEAN: 'Yes/No Criterion',
-              }"
+              :values="$tm('pages.tenders.create.criterionTypes')"
             />
             <ESelect
               v-model:value="c.aggType"
-              label="Scoring Method"
+              :label="$t('pages.tenders.create.scoringMethodLabel')"
               selected="AVG"
-              :values="{
-                AVG: 'Average Scoring',
-                SUM: 'Total Scoring',
-                MIN: 'Lowest Score',
-                MAX: 'Highest Score',
-              }"
+              :values="$tm('pages.tenders.create.scoringMethods')"
             />
           </div>
         </div>
         <div v-if="numberStep == 3" class="step-container">
-          <label class="label">Submission dates</label>
+          <label class="label">{{
+            $t("pages.tenders.create.periodTtitle")
+          }}</label>
           <VueDatePicker
             v-model="period"
             class="range"
@@ -84,7 +96,9 @@
           v-if="numberStep == 4 && !isPending && !isCreated"
           class="step-container"
         >
-          <label class="label">Evaluation Deadline</label>
+          <label class="label">{{
+            $t("pages.tenders.create.deadlineTtitle")
+          }}</label>
           <VueDatePicker
             v-model="deadlineDate"
             class="range"
@@ -93,7 +107,9 @@
             :min-date="new Date()"
           ></VueDatePicker>
           <div class="jury-email">
-            <label class="label">Panel Member Email</label>
+            <label class="label">{{
+              $t("pages.tenders.create.emailTitle")
+            }}</label>
             <div
               v-for="(e, key) in juryEmails"
               :key="key"
@@ -127,14 +143,14 @@
             class="button next-step"
             @click="numberStep--"
           >
-            Back
+            {{ $t("pages.tenders.create.backButton") }}
           </button>
           <button
             v-if="isStepValid && numberStep != maxStep"
             class="button next-step"
             @click="goToNextStep()"
           >
-            Next
+            {{ $t("pages.tenders.create.nextButton") }}
           </button>
           <button
             v-if="!isStepValid && numberStep != maxStep"
@@ -142,7 +158,7 @@
             disabled
             @click="goToNextStep()"
           >
-            Next
+            {{ $t("pages.tenders.create.nextButton") }}
           </button>
           <button
             v-if="numberStep == 1"
@@ -152,7 +168,7 @@
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add New Lot</span>
+            <span>{{ $t("pages.tenders.create.addNewLotButton") }}</span>
           </button>
           <button
             v-if="numberStep == 4"
@@ -162,7 +178,7 @@
             <span class="icon">
               <i class="fa fa-plus"></i>
             </span>
-            <span>Add New Email</span>
+            <span>{{ $t("pages.tenders.create.addNewEmailButton") }}</span>
           </button>
 
           <button
@@ -170,7 +186,7 @@
             class="button"
             @click="create"
           >
-            Create
+            {{ $t("pages.tenders.create.createButton") }}
           </button>
         </div>
       </div>
@@ -204,13 +220,6 @@ export default defineComponent({
       disabledItems: [1, 2, 3, 4],
       isPending: false,
       isCreated: false,
-      stepNames: [
-        "Tender Details",
-        "Lot Details",
-        "Lot Evaluation Criterion",
-        "Submission dates",
-        "Evaluation Panel Contacts",
-      ],
       emailRegex:
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
 
