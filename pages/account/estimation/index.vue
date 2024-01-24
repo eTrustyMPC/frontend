@@ -19,9 +19,10 @@
                       $t("pages.account.estimation.index.tenderTitleLable")
                     }}:
                   </b>
-                  <nuxt-link :to="{ path: `/tenders/${tender.id}` }">{{
-                    tender.title
-                  }}</nuxt-link>
+                  <nuxt-link
+                    :to="{ path: `/tenders/${getTenderByOffer(offer).id}` }"
+                    >{{ getTenderByOffer(offer).title }}</nuxt-link
+                  >
                 </div>
                 <div class="offer-info">
                   <b
