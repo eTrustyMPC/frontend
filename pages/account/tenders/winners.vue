@@ -63,24 +63,16 @@
                 >
                   <div class="offer-info">
                     <b
-                      >Winner email: {{ usersMap[winners[0].ownerId].email }}</b
-                    >
-                  </div>
-                  <div class="offer-info">
-                    <b>Winner price: {{ winners[0].cost }}</b>
-                  </div>
-                  <div class="offer-info">
-                    <b
                       >{{
                         $t("pages.account.tenders.winners.winnerEmailLabel")
-                      }}: {{ usersMap[winner.ownerId].email }}</b
+                      }}: {{ usersMap[winners[0].ownerId].email }}</b
                     >
                   </div>
                   <div class="offer-info">
                     <b
                       >{{
                         $t("pages.account.tenders.winners.winnerPriceLabel")
-                      }}: {{ winner.cost }}</b
+                      }}: {{ winners[0].cost }}</b
                     >
                   </div>
                   <div class="offer-info">
